@@ -1,0 +1,126 @@
+﻿@using ERP_Component_DAL.Models;
+<link rel="stylesheet" href="~/css/Product.css" />
+@using Newtonsoft.Json
+
+@model List<Category>
+
+@{
+    ViewBag.Title = "Master";
+
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="~/css/Tables.css" rel="stylesheet" />
+
+
+<div class="container" id="product" style="display: block; margin-top:50px;">
+
+
+
+    <form method="post" asp-action="AddCategory" asp-controller="Inventory" onsubmit="return savedDetail()">
+        <div class="form-section">
+            <h3>Category Info</h3>
+            <div class="form-row" style="width:60%">
+
+              
+                <label class="required">Category Name</label>
+                <input type="text" name="categoryName" placeholder="Enter Category Name" />
+                <input type="hidden" name="formType" value="product" />
+
+
+            </div>
+  
+        </div>
+            <div class="button-container">
+                <button type="submit" style="background-color:#349769; width:110px;height:35px;"> Add</button>
+            </div>
+    </form>
+</div>
+
+<div class="table-container"> 
+    <table class="product-table">
+        <thead>
+            <tr>
+                <th>Sno.</th>
+                <th>Category</th>
+                <th>Action</th>
+
+            </tr>
+        </thead>
+        <tbody id="geeks">
+
+
+            @for (var i = 0; i < Model.Count; i++)
+            {
+
+                var x = Model[i];
+                var index = i + 1;
+
+                <tr id="row-@x.">
+                    <td>@index</td>
+                    <td>@x.categoryName</td>
+                    <td>
+                        <div class="actions">
+
+                            <button onclick="location.href='@Url.Action("EditCategory", "Inventory", new { categoryId = x.categoryId }, null)'"><i class="fas fa-edit"></i></button>
+                            <button onclick="location.href='@Url.Action("DeleteCategory", "Inventory", new { categoryId = x.categoryId }, null)'"><i class="fas fa-trash"></i></button>
+
+                   
+                        </div>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+
+    </table>
+
+
+
+
+
+    </div>
+
+
+<div id="popup" style="display:none; position:fixed; z-index:9999; right:0;height:100%;width:100%; right:0; overflow:hidden; justify-content:center; background-color:rgba(0,0,0,0.5); align-items:center;top:0;">
+    <div style="display:grid; justify-content:center; align-items:center; margin-top:250px; overflow:hidden;">
+
+        <p>
+            <img style="height:60px; width:100px;" src="~/Images/loading3.gif
+">
+
+    </div>
+</div>
+
+
+<div id="example-table-theme" class="product-table" style=" table-layout: auto; overflow-x: auto;"></div>
+<script>
+      function savedDetail(){
+                Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500
+    });
+    }
+</script>
+
+
+
+<script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
+
+<script type="text/javascript">
+
+
+      function showLoading() {
+
+    document.getElementById("popup").style.display = 'block';
+    }
+
+
+
+
+</script>

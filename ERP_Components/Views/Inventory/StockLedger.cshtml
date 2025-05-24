@@ -1,0 +1,118 @@
+﻿@using ERP_Component_DAL.Models;
+
+
+@{
+    ViewBag.Title = " Reports";
+
+}
+
+@model LedgerDetails
+<link rel="stylesheet" href="~/css/Product.css">
+
+
+
+
+<div id="product" class="container" style="display:block">
+    <form method="post" asp-action="StockLedger" asp-controller="Inventory" onsubmit="return savedDetail()">
+
+        <div class="form-section">
+            <h3>Stock Ledger</h3>
+            <div class="form-row" style="display: flex; gap: 5px;">
+                <div style="flex: 0 0 50%;">
+                    <label class="required" for="itemName">Product Name:</label>
+                    <select name="itemId" style="width: 100%;">
+                        <option selected disabled>Select Item</option>
+                        @foreach (var item in Model.Items)
+                        {
+                            <option value="@item.itemId">@item.itemName</option>
+                        }
+                    </select>
+                </div>
+                <div style="flex: 0 0 8%;"></div>
+                <div style="flex: 0 0 20%; ">
+                    <label class="required" for="startDate">Start Date:</label>
+                    <input type="date" name="startDate" required style="width: 100%;" />
+                </div>
+
+                <div style="flex: 0 0 20%;">
+                    <label class="required" for="endDate">End Date:</label>
+                    <input type="date" name="endDate" style="width: 100%;" />
+                </div>
+            </div>
+            
+           
+
+        </div>
+
+
+
+
+
+
+        <div class="button-container">
+            <button type="submit">Submit</button>
+            <button type="reset">Reset</button>
+        </div>
+    </form>
+</div>
+
+
+@if(Model.ledger.Count >0)
+{
+<div class="table-container">
+    <table class="product-table">
+        <thead>
+            <tr>
+                <th>S.No.</th>
+                <th>Date</th>
+                <th>Perticular</th>
+                <th>Stock in</th>
+                <th>Stock Out</th>
+                <th>Balance</th>
+
+            </tr>
+        </thead>
+        <tbody id="geeks">
+
+
+            @for (var i = 0; i < Model.ledger.Count; i++)
+            {
+
+                var v = Model.ledger[i];
+                <tr data-id="@v.itemId">
+                    <td>@(i + 1)</td>
+
+                    <td>@v.StockDate.ToShortDateString()</td>
+                    <td>@v.Perticulars</td>
+                    <td>@v.stockiin</td>
+                    <td>@v.stockout</td>
+                    <td>@v.quantity</td>
+
+
+                </tr>
+            }
+        </tbody>
+
+    </table>
+
+
+
+
+
+</div>
+}
+
+
+
+
+<script>
+      function savedDetail(){
+                Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500
+    });
+    }
+</script>

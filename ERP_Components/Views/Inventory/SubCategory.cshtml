@@ -1,0 +1,144 @@
+﻿@using ERP_Component_DAL.Models;
+<link rel="stylesheet" href="~/css/Product.css" />
+
+@model ManageCategory
+
+@{
+    ViewBag.Title = "Master";
+
+}
+
+
+
+<div class="container" id="product" style="display:block; margin-top:50px">
+
+
+
+    <form method="post" asp-action="AddSubCategory" asp-controller="Inventory">
+        <div class="form-section">
+            <h3>Category Info</h3>
+            <div class="form-row">
+                <label class="required">Category Name</label>
+                <select class="form-control" name="categoryId" required>
+                    <option disabled selected style="color:grey"> Select Name</option>
+                    @for (var i = 0; i < Model.Categories.Count; i++)
+                    {
+
+                        <option value="@Model.Categories[i].categoryId">@Model.Categories[i].categoryName</option>
+                    }
+                </select>
+               
+           
+                <label class="required">Sub-Category Name</label>
+                <input type="text" name="subCategoryName" placeholder="Enter Category Name" />
+            </div>
+          
+        </div>
+        <div class="button-container">
+                <button type="submit">Submit</button>
+            </div>
+    </form>
+</div>
+
+
+
+<div class="table-container" id="product" style="display:block">
+
+    <div style="display:flex;justify-content:center;text-align:center">
+
+
+    </div>
+
+    <div class="Table">
+        <table class="table1">
+            <thead>
+                <tr>
+                    <th>S.No.</th>
+                    <th>Category Name</th>
+                    <th>Sub-Category Name</th>              
+                    <th>Action</th>
+
+
+                </tr>
+            </thead>
+            <tbody id="geeks">
+
+
+                @for (var i = 0; i < Model.SubCategories.Count; i++)
+                {
+
+                    var x = Model.SubCategories[i];
+                    var index = i + 1;
+
+                    <tr>
+                        <td>@index</td>
+                        <td>@x.categoryName</td>
+                        <td>@x.subCategoryName</td>
+                   
+
+                        <td>
+                            <div class="actions">
+
+                                <button onclick="location.href='@Url.Action("EditSubCategory", "Inventory", new { subCategoryId = x.SubCategoryId }, null)'"><i class="fas fa-edit"></i></button>
+                                <button onclick="openRejectModal('@x.SubCategoryId')"><i class="fas fa-trash"></i></button>
+
+                            </div>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+
+
+
+        </table>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+       
+
+   
+        $(document).ready(function () {
+            getName();
+        });
+
+        function getName() {
+            $.ajax({
+                type: "GET",
+                url: "/Inventory/CategoriesNames",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    let dropdown = $("#name");
+                    dropdown.empty();
+                    dropdown.append('<option selected disabled>Select</option>');
+
+                    response.forEach(function (item) {
+                        const category = item.categoryName || item.CategoryName;
+                        if (category) {
+                            dropdown.append(`<option value="${category}">${category}</option>`);
+                        }
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", error);
+                }
+            });
+        }
+</script>
+
+<script>
+      function savedDetail(){
+                Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500
+    });
+    }
+</script>
+
+
+    

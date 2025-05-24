@@ -1,0 +1,365 @@
+﻿@using ERP_Component_DAL.Models;
+@using Microsoft.AspNetCore.Http;
+
+@{
+    ViewBag.Title = "Master";
+  string createdby = Context.Session.GetString("UserId");
+
+}
+
+<link rel="stylesheet" href="~/css/Product.css">
+
+@model List<Product>
+
+
+
+<div id="product"  class="container">
+    <form method="post" asp-action="AddProduct" asp-controller="Inventory" onsubmit="return savedDetail()">
+        
+                <div class="form-section">
+            <h3>Product Info</h3>
+
+
+            <div class="form-row">
+
+                <label class="required" for="category">Category:</label>
+                <select name="categoryId" id="role" onchange="getName()">
+                    <option disabled selected>Select</option>
+                    @foreach (var scheme in Model)
+                    {
+                        @foreach (var category in scheme.category)
+                        {
+                            <option value="@category.categoryId">@category.categoryName</option>
+                        }
+                    }
+                </select>
+                <label class="required" for="subCategory">Sub-category:</label>
+                <select id="name" name="subCategoryId">
+                    <option selected disabled>Select</option>
+
+                </select>
+            </div>
+            
+            <div class="form-row">
+                <label class="required" for="itemName">Product Name:</label>
+                <input type="text" name="itemName" required />
+                <input type="hidden" name="itemType" value="1" required />
+
+
+                <label class="required" for="itemCode">Product Code:</label>
+                <input type="text" name="itemCode" required />
+
+            </div>
+          
+            <div class="form-row">
+                
+                <label for="descr">Specification:</label>
+                <textarea style="width:33%" name="specification"></textarea>
+
+                <label class="required" for="msl">Brand:</label>
+                <input type="text" name="brand" />
+
+
+                <input type="hidden" name="TransactionType" value="By Stock Counting" />
+                <input type="hidden" name="TransactionReason" value="Stock Update Based on Counting" />
+                <input type="hidden" name="Perticulars" value="By Stock Counting" />
+            </div>
+           
+            
+            <div class="form-row">
+                <label class="required" for="InvoiceDate">Invoice Date:</label>
+                <input type="date" name="InvoiceDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                <label class="required" for="ExpiryDate">Expiry Date:</label>
+                <input type="date" name="ExpiryDate" />
+                <input type="hidden" name="type" value="batch"  />
+              
+            </div>
+      
+         </div>
+
+        <div class="form-section"  >
+            <h3>Unit Of Measurement</h3>
+            <div class="form-row" style="width:50%">
+                <label for="image">Unit Of Measurement:</label>
+
+
+                <select name="UOM" id="uomDropdown">
+                    <option selected>Select UOM</option>
+                    @foreach (var scheme in Model)
+                    {
+                        @foreach (var uom in scheme.UOM)
+                        {
+                            <option value="@uom.uomcode">@uom.uomname</option>
+                        }
+                    }
+                    <option value="add_new">+ Add New UOM</option>
+                </select>
+            </div>
+        </div>
+
+               
+
+       <div class="form-section">
+        <h3>Stock Details</h3>
+        <div class="form-row">
+
+                <label class="required" for="quantity">Opening Stock:</label>
+                <input type="number" id="OpeningStock" name="quantity" required  />
+
+                <label class="required" for="StockDate">As On Date:</label>
+                <input type="date" name="StockDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+              
+        </div>
+            <div class="form-row" style="width:50%">
+                <label class="required" for="stockAlert">Minimum Stock Level:</label>
+                <input type="number" name="stockAlert" placeholder="Enter minimum qty to be maintained" required />
+
+           
+        </div>
+
+
+    </div>
+
+        <div class="form-section">
+            <h3>Price Details</h3>
+            <div class="form-row">
+                <label class="required" for="unitPrice">Unit Price:</label>
+                <input type="number" id="unitPrice" name="unitPrice" required />
+                <label class="required" for="gst">GST Rate:</label>
+                <select id="TaxTypeDropDownList" class="form-control" name="gst">
+                    <option selected>Select GST Rate</option>
+                    <option value="0">GST-0 </option>
+                    <option value="5">GST-5</option>
+                    <option value="12">GST-12</option>
+                    <option value="18">GST-18</option>
+                    <option value="28">GST-28</option>
+                 </select>
+            </div>
+           
+
+     
+            </div>
+            <div class="form-section">
+                <h3>Tracking Details(Optional)</h3>
+                <div class="form-row" style="width:50%">
+
+                    <label class="" for="batchSeries">LOT Series</label>
+                    <input type="text" name="lotSeries"  />
+                <input type="hidden" name="CreatedBY" value="@createdby" />
+                    
+
+
+                </div>
+
+
+        </div>
+
+
+           <div class="button-container">
+            <button type="submit">Submit</button>
+            <button type="reset" >Reset</button>
+        </div>
+    </form>
+</div> 
+
+
+<div class="modal fade" id="addUomModal" tabindex="-1" aria-labelledby="addUomModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="addUomForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New UOM</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="uomCode" class="form-label">UOM Code</label>
+                        <input type="text" class="form-control" id="uomCode" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="uomName" class="form-label">UOM Name</label>
+                        <input type="text" class="form-control" id="uomName" required />
+               
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function CalculateTotal() {
+        var unitPrice = parseFloat($("input[name='unitPrice']").val()) || 0;
+        var quantity = parseFloat($("input[name='quantity']").val()) || 0;
+
+        var totalPrice = unitPrice * quantity;
+
+        $('#TotalPrice').val(totalPrice.toFixed(2)); // Optional: format to 2 decimal places
+    }
+
+
+    function CalculateGST() {
+
+        var totalPrice = parseFloat($("input[name='TotalPrice']").val()) || 0;
+        var gstRate = parseFloat($("#TaxTypeDropDownList").val()) || 0;
+        var gstValue = (unitPrice * gstRate) / 100;
+        $('#TotalPrice').val(gstValue.toFixed(2)); // Optional: format to 2 decimal places
+    }
+
+        function getName() {
+        var Id = $("#role").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/Inventory/SubCategoriesNames",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: { categoryId: Id },
+                success: function (response) {
+        console.log("Subcategories response:", response);
+        if (response.length > 0) {
+            $("#name").empty();
+            $("#name").append('<option selected disabled>Select</option>');
+            response.forEach(function (item) {
+                console.log("Each item:", item);
+                $("#name").append('<option value="' + item.subCategoryId  + '">' + item.categoryName + '</option>');
+            });
+        } else {
+            $("#name").empty().append('<option selected disabled>No SubCategory Found</option>');
+        }
+    },
+
+            error: function (xhr, status, error) {
+                console.error("AJAX Error: ", error);
+                console.error("Status: ", status);
+                console.error("Response: ", xhr.responseText);
+                alert("Error fetching user data. Check console for details.");
+            }
+        });
+    }
+
+
+</script>
+
+<script>
+      function savedDetail(){
+                Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500
+    });
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        // Show modal if "Add New" is selected
+        $('#uomDropdown').on('change', function () {
+            if ($(this).val() === 'add_new') {
+                $('#addUomModal').modal('show');
+            }
+        });
+
+        // Handle form submission
+        $('#addUomForm').submit(function (e) {
+            e.preventDefault();
+
+            var uomCode = $('#uomCode').val().trim();
+            var uomName = $('#uomName').val().trim();
+
+            if (!uomCode || !uomName) {
+                alert("Both fields are required.");
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/Inventory/AddUOM', // replace with your actual endpoint
+                contentType: 'application/json',
+                data: JSON.stringify({ UOMCode: uomCode, UOMName: uomName }),
+                success: function (response) {
+                    if (response.success) {
+                        // Add to dropdown
+                        $('#uomDropdown option[value="add_new"]').before(
+                            $('<option>', {
+                                value: response.uomId,
+                                text: response.uomName,
+                                selected: true
+                            })
+                        );
+                        $('#addUomModal').modal('hide');
+                        $('#uomCode').val('');
+                        $('#uomName').val('');
+                    } else {
+                        alert("Failed to add UOM: " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("Error while adding UOM.");
+                }
+            });
+        });
+    });
+
+</script>
+<script>
+
+    $(document).ready(function () {
+        // Open modal on selecting "Add New"
+        $('#warrantyDropdown').on('change', function () {
+            if ($(this).val() === 'add_new') {
+                $('#addWarrantyModal').modal('show');
+            }
+        });
+
+        // Submit modal form via AJAX
+        $('#addWarrantyForm').on('submit', function (e) {
+            e.preventDefault();
+
+            let name = $('#warrantyName').val().trim();
+            let months = parseInt($('#warrantyValue').val().trim());
+
+            if (!name || isNaN(months) || months <= 0) {
+                alert("Enter valid warranty details.");
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/Inventory/AddWarrenty', // your endpoint
+                contentType: 'application/json',
+                data: JSON.stringify({ PeriodName: name, PeriodInMonths: months }),
+                success: function (response) {
+                    if (response.success) {
+                        // Insert before "add_new" and select
+                        $('#warrantyDropdown option[value="add_new"]').before(
+                            $('<option>', {
+                                value: response.id,
+                                text: response.name,
+                                selected: true
+                            })
+                        );
+
+                        $('#addWarrantyModal').modal('hide');
+                        $('#warrantyName').val('');
+                        $('#warrantyValue').val('');
+                    } else {
+                        alert("Failed to add warranty period.");
+                    }
+                },
+                error: function () {
+                    alert("Error occurred while adding warranty.");
+                }
+            });
+        });
+    });
+</script>

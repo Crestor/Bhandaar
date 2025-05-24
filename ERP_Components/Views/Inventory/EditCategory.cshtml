@@ -1,0 +1,45 @@
+﻿@using ERP_Component_DAL.Models;
+<link rel="stylesheet" href="~/css/Product.css" />
+@{
+    ViewBag.Title = "Modify Category";
+
+}
+
+@model Category
+
+
+
+<div class="container" style="margin-top:50px">
+
+
+ 
+    <form method="post" asp-action="EditCategory" asp-controller="Inventory" onsubmit="return savedDetail()">
+        <div class="form-section">
+            <h3>Modify Category</h3>
+            <div class="form-row">
+                <label class="required">Category Name</label>
+                <input type="text" value="@Model.categoryName" name="categoryName" placeholder="Enter Category Name" />
+                <input type="text" value="@Model.categoryId" name="categoryId" placeholder="Enter Category Name" hidden />
+            
+                
+            </div>
+         
+            <div class="button-container">
+              
+                <button type="submit">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+      function savedDetail(){
+                Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500
+    });
+    }
+</script>

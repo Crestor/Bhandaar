@@ -1,0 +1,220 @@
+﻿@using ERP_Component_DAL.Models;
+
+
+@{
+    ViewBag.Title = "Inventory Management";
+ 
+}
+
+<link rel="stylesheet" href="~/css/Product.css">
+
+@model List<Product>
+
+<div id="product" class="container" style="display:block">
+    <form method="post" asp-action="SetAdjustment" asp-controller="Inventory" onsubmit="return savedDetail()">
+
+        <div class="form-section">
+            <h3>Items Adjustment</h3>
+            <div class="form-row">
+                <label class="required" for="category">Category:</label>
+                <select name="categoryId" id="role" onchange="getName()">
+                    <option disabled selected>Select</option>
+                    @foreach (var scheme in Model)
+                    {
+                        @foreach (var category in scheme.category)
+                        {
+                            <option value="@category.categoryId">@category.categoryName</option>
+                        }
+                    }
+                </select>
+                <label class="required" for="subCategory">Sub-category:</label>
+                <select id="SubCategory" name="subCategoryId" onchange="getProducts()">
+                    <option selected disabled>Select</option>
+
+                </select>
+            </div>
+            <div class="form-row">
+
+                <label class="required" for="productName">Item Name:</label>
+
+
+                <select id="Productname" name="itemId">
+                    <option selected disabled>Select</option>
+
+                </select>
+
+
+                <label class="required" for="supplier">Current Quantity:</label>
+                <input type="number" id="currentStock" name="currentStock" readonly />
+
+             
+            </div>
+           
+            <div class="form-row">
+        
+
+
+             <label class="required" for="Quantity">Correction Quantity: (e.g -10 ,10)</label>
+                <input type="number" id="ChangeQty" name="Changequantity" placeholder="enter quantity change" onchange="CalculaeQty()" />
+
+
+             <label class="required" for="Quantity">Updated Quantity:</label>
+                <input type="number" id="UpdateQty" name="quantity" />
+
+                   
+
+            </div>
+            <div class="form-row">
+            
+                <label for="date">Date:</label>
+                <input type="date" name="date"  />
+
+             <label for="descr">Reason For Adjustment:</label>
+                <textarea  name="reason"></textarea>   
+            </div>
+
+           
+        </div>
+
+
+        <div class="button-container">
+            <button type="submit">Submit</button>
+            <button type="reset">Reset</button>
+        </div>
+    </form>
+</div>
+
+
+
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <table id="myTable" class="table table-bordered" style="">
+        <thead>
+            <tr style=" background-color: #F8F8F8;">
+                <th>Sr No.<span style="color: red;"></span></th>   
+                <th>Item Name</th>
+                <th id="Quantity" style="display: flex;">Quantity</th>           
+                <th id="Batch">Batch/Serial</th>
+              
+            </tr>
+        </thead>
+        <tbody id="productDetailsTable"></tbody>
+          </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+      function savedDetail(){
+                Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500
+    });
+    }
+
+function CalculaeQty() {
+    var inStock = parseInt($("#currentStock").val()) || 0;
+    var change = parseInt($("#ChangeQty").val()) || 0;
+    var newValue = inStock + change;
+    $("#UpdateQty").val(newValue); // Fixed selector
+}
+</script>
+<script>
+    var itemData = {};
+    function getName() {
+        var Id = $("#role").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/Inventory/SubCategoriesNames",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: { categoryId: Id },
+            success: function (response) {
+
+                if (response.length > 0) {
+                    $("#SubCategory").empty();
+                    $("#SubCategory").append('<option selected disabled>Select</option>');
+                    response.forEach(function (item) {
+                        console.log("Each item:", item);
+                        $("#SubCategory").append('<option value="' + item.subCategoryId + '">' + item.categoryName + '</option>');
+                    });
+                } else {
+                    $("#SubCategory").empty().append('<option selected disabled>No SubCategory Found</option>');
+                }
+            },
+
+            error: function (xhr, status, error) {
+                console.error("AJAX Error: ", error);
+                console.error("Status: ", status);
+                console.error("Response: ", xhr.responseText);
+                alert("Error fetching user data. Check console for details.");
+            }
+        });
+    }
+
+
+
+    function getProducts() {
+        var Id = $("#SubCategory").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/Inventory/GetProductBasedonCategory",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: { SubCategoryID: Id },
+            success: function (response) {
+                console.log("Subcategories response:", response);
+                if (response.length > 0) {
+                    itemData = {};
+                    $("#Productname").empty();
+                    $("#Productname").append('<option selected disabled>Select</option>');
+                    response.forEach(function (item) {
+                        console.log("Each item:", item);
+                        $("#Productname").append('<option value="' + item.itemId + '">' + item.itemName + '</option>');
+                       itemData[item.itemId] = item;
+                    });
+                } else {
+                    $("#Productname").empty().append('<option selected disabled>No Product Found</option>');
+                }
+            },
+
+            error: function (xhr, status, error) {
+                console.error("AJAX Error: ", error);
+                console.error("Status: ", status);
+                console.error("Response: ", xhr.responseText);
+                alert("Error fetching user data. Check console for details.");
+            }
+        });
+    }
+   
+$(document).on('change', '#Productname', function () {
+    var selectedItemId = $(this).val();
+    var item = itemData[selectedItemId];
+
+    if (item) {
+        $('#currentStock').val(item.quantity || '');
+
+        // Update table row
+        var row = `
+            <tr>
+                <td>1</td>
+                <td>${item.itemName}</td>
+                <td>${item.quantity}</td>            
+                <td>${item.batch || '-'}</td>             
+            </tr>
+        `;
+
+        $('#productDetailsTable').html(row); // Replace content with current selection
+    } else {
+        $('#productDetailsTable').empty();
+        $('#currentStock').val('');
+    }
+});
+
+</script>
+

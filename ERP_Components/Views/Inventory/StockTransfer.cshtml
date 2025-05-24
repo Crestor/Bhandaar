@@ -1,0 +1,84 @@
+﻿@using ERP_Component_DAL.Models;
+
+
+@{
+    ViewBag.Title = " Stock Transfer";
+
+}
+
+@model List<Product>
+<link rel="stylesheet" href="~/css/Product.css">
+
+
+
+<div id="product" class="container">
+    <form method="post" asp-action="AddStockTransfer" asp-controller="Inventory" onsubmit="return savedDetail()">
+
+        <div class="form-section">
+            <h3> Stock Transfer</h3>
+            <div class="form-row">
+
+                <label class="required" for="itemName">Product Name:</label>
+                <select name="itemId">
+                    <option selected disabled>Select Item</option>
+                    @foreach (var scheme in Model)
+                    {
+                        @foreach (var item in scheme.items)
+                        {
+                            <option value="@item.itemId">@item.itemName</option>
+                        }
+                    }
+                </select>
+                
+                @* <input type="hidden" name="itemType" value="product" required /> *@
+
+                <label class="required" for="sku">Order Date:</label>
+                <input type="date" name="orderDate" required />
+            </div>
+            <div class="form-row">
+                <label class="required" for="supplier">Customer Name:</label>
+                <input type="text" name="customerName" />
+                <label class="required" for="batch">Batch Number:</label>
+                <input type="text" name="batchSeries">
+                <input type="hidden" name="type" value="stockOut">
+            </div>
+            <div class="form-row">
+              
+
+                <label for="descr">Quantity Ordered:</label>
+                <input type="number" name="quantity">
+                <label for="cost">Available Stock:</label>
+                <input type="text" name="available" />
+            </div>
+            <div class="form-row">
+                <label for="price">Selling Price:</label>
+                <input type="text" name="sellingPrice" />
+                <label for="image">Total Amount:</label>
+                <input type="text" name="totalPrice">
+            </div>
+           
+        </div>
+
+
+
+
+
+
+        <div class="button-container">
+            <button type="submit">Submit</button>
+            <button type="reset">Reset</button>
+        </div>
+    </form>
+</div>
+
+<script>
+      function savedDetail(){
+                Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500
+    });
+    }
+</script>

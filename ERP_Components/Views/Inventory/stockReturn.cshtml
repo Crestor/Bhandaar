@@ -1,0 +1,141 @@
+﻿@using ERP_Component_DAL.Models;
+
+
+@{
+    ViewBag.Title = "Inventory Management";
+}
+
+<link rel="stylesheet" href="~/css/Product.css">
+
+@model List<Category>
+
+
+<div id="asset" class="container">
+
+    <form method="post" asp-action="StockReturnUpdate" asp-controller="Inventory" onsubmit="savedDetail()">
+
+        <div class="form-section">
+            <h3>Stock Return</h3>
+            <div class="form-row">
+                <label class="required" for="category">Category:</label>
+                <select class="form-control" id="role" onchange="getName()" name="categoryId" required>
+                    <option disabled selected> select Name</option>
+                    @for (var i = 0; i < Model.Count; i++)
+                    {
+
+                        <option value="@Model[i].categoryId">@Model[i].categoryName</option>
+                    }
+                </select>
+                <label class="required" for="assetName">Item Name:</label>
+                <select name="itemId" id="name">
+                    <option selected disabled>select</option>
+                </select>
+                <input type="hidden" name="itemType" value="asset" />
+
+
+
+            </div>
+            <div class="form-row">
+                <label class="required" for="serial">InStock Quantity:</label>
+
+                <input type="text" id="InstockQuantity" name="InstockQuantity" />
+
+
+                <label class="required" for="serial">Assigned Quantity:</label>
+                <input type="text" name="Quantity" />
+
+
+
+            </div>
+            <div class="form-row">
+                <label class="required" for="serial">Current Owner:</label>
+                <input type="text" name="currentOwner" />
+
+                <label class="required" for="serial">New Owner:</label>
+                <input type="text" name="newOwner" value="Store" readonly/>
+
+
+
+            </div>
+
+            <div class="form-row">
+                <label for="location">Reason:</label>
+                <textarea name="description"></textarea>
+            </div>
+        </div>
+
+
+        <div class="button-container">
+            <button type="submit">Submit</button>
+            <button type="reset">Reset</button>
+        </div>
+    </form>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var itemData = {};
+
+    function getName() {
+        var categoryId = $("#role").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/Inventory/GetProductBasedonCategory",
+            data: { categoryId: categoryId },
+            dataType: "json",
+            success: function (response) {
+                console.log("Subcategories response:", response);
+                var $nameSelect = $("#name");
+                $nameSelect.empty();
+
+                if (response.length > 0) {
+                    $nameSelect.append('<option selected disabled>Select</option>');
+                    itemData = {}; // Clear previous data
+
+                    response.forEach(function (item) {
+                        $nameSelect.append(
+                            `<option value="${item.itemId}">${item.itemName}</option>`
+                        );
+                        itemData[item.itemId] = item.quantity;
+                    });
+                } else {
+                    $nameSelect.append('<option selected disabled>No Product Found</option>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX Error:", error);
+                console.error("Status:", status);
+                console.error("Response:", xhr.responseText);
+                alert("Error fetching product data. Check console for details.");
+            }
+        });
+    }
+
+    // Event handler for item selection
+    $(document).on('change', '#name', function () {
+        var selectedItemId = $(this).val();
+        var quantity = itemData[selectedItemId];
+
+        $('#InstockQuantity').val(quantity !== undefined ? quantity : '');
+    });
+</script>
+
+
+
+
+
+
+
+<script>
+      function savedDetail(){
+                Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500
+    });
+    }
+</script>

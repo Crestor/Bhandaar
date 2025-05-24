@@ -1,0 +1,68 @@
+﻿@* @model List<StockAdjustment> *@
+
+@{
+    ViewBag.Title = "Stock Adjustments";
+  
+
+    }
+
+    <link href="~/css/Stock.css" rel="stylesheet" />
+
+
+<div class="adjustment-section">
+
+
+
+    <table class="adjustment-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Product</th>
+          
+                <th>Quantity Change</th>
+                <th>Reason</th>
+                <th>Adjustment Date</th>
+                <th colspan="2">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+      
+                <tr>
+                    <form asp-action="UpdateStockAdjustment" asp-controller="Home" method="post">
+                    <td>
+                         
+                        <input type="hidden" name="AdjustmentId" />
+                            
+                    </td>
+                    <td>
+                      
+                        ProductName</td>
+                 
+                    <td>
+                        <input type="number" name="QuantityChange" />
+                           
+                    </td>
+                    <td>
+                        <input type="text" name="Reason" />
+                            
+                    
+                    </td>
+                    <td>
+                    <input type="date" name="Reason" />
+                    </td>
+                    <td>
+                        <button type="submit" class="btn-update" style="background-color:#349769">Update</button>
+                    </td>
+                    </form>
+
+                    <form asp-action="DeleteStockAdjustment" asp-controller="Home" method="post" onsubmit="return confirm('Delete this adjustment?');">
+                    <td>
+                        <input type="hidden" name="AdjustmentId"  />
+                    <button type="submit" class="btn-delete" style="background-color:#c34949">Delete</button>
+                    </td>
+                    </form>
+                </tr>
+            @* } *@
+        </tbody>
+    </table>
+</div>

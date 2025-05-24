@@ -1,0 +1,242 @@
+﻿@* @model List<Warehouse> *@
+
+@{
+    ViewBag.Title = "Warehouses";
+
+}
+
+<link rel="stylesheet" href="~/css/Product.css">
+
+<div class="header1">
+    <h4>Add Warehouse</h4>
+</div>
+
+<div class="container">
+    <form id="vendorForm" method="post" asp-action="AddWarehouses" asp-controller="Inventory" onsubmit="savedDetail()">
+
+
+     
+      
+        <div class="form-section">
+            <h3>Warehouse Details</h3>
+            <div class="form-row">
+
+                <label for="name">Warehouse Name</label>
+                <input type="text" id="panno" name="warehouseName" required>
+                <input type="hidden" name="type" value="1" required>
+
+
+                <label for="address2"> Address Line 1:   </label>
+                <input type="text" id="address1" name="Address1" required>
+
+     
+              
+            </div>
+            <div class="form-row">
+                <label for="address2"> Address Line 2:   </label>
+                <input type="text" id="address2" name="Address2" required>
+        <label for="country">Country:</label>
+        <select id="country" name="Country">
+            <option selected disabled>-Select-</option>
+            <option>India</option>
+
+            </select>
+
+
+            </div>
+
+            <div class="form-row">
+                <label for="state">State: </label>
+                <select id="state" name="State" required>
+                    @* onchange="updateDistricts()" *@
+                    <option selected disabled value=" ">-Select State-</option>
+
+                </select>
+
+                <label for="district"> District: </label>
+        <select id="district" name="District" required>
+            <option disabled selected value=" ">-Select District-</option>
+        </select>
+
+               
+                
+            </div>
+
+            <div class="form-row">
+                <label for="city">Area:</label>
+                <select id="city" name="Area" onchange="checkOtherCity(this)" required>
+                    <option selected disabled value="">-Select Area-</option>
+                    <option value="other">other</option>
+
+
+                </select>
+    <label for="pincode"> Postal Code:</label>
+    <input type="text" id="pincode" name="PostalCode" required>
+    </div>
+        </div>
+        <div class="button-container">
+            <button type="submit">Submit</button>
+            <button type="reset" onclick="resetForm()">Reset</button>
+        </div>
+    </form>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+         let statesData = null;
+
+         async function fetchData(url) {
+        try {
+            const response = await fetch(url);
+            statesData = await response.json();
+            console.log("Fetched data:", statesData);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }
+
+        async function populateStates() {
+            console.log("Populating states...");
+            await fetchData("/Json/city.json");
+
+            const stateSelect = document.getElementById("state");
+            if (statesData && statesData.states) {
+                statesData.states.forEach((state) => {
+                    let option = new Option(state.name, state.name);
+                    stateSelect.add(option);
+                });
+            }
+        }
+
+
+
+
+        async function updateDistricts() {
+            const stateName = document.getElementById("state").value;
+            const districtSelect = document.getElementById("district");
+            districtSelect.innerHTML = '<option value="">-Select District-</option>';
+
+            if (!stateName) return;
+
+            const selectedState = statesData.states.find(state => state.name === stateName);
+            if (selectedState && selectedState.districts) {
+                selectedState.districts.forEach((district) => {
+                    let option = new Option(district.name, district.name);
+                    districtSelect.add(option);
+                });
+            }
+        }
+
+
+
+        async function updateCities() {
+            const stateName = document.getElementById("state").value;
+            const districtName = document.getElementById("district").value;
+            const citySelect = document.getElementById("city");
+
+            citySelect.innerHTML = '<option value="">-Select City-</option>';
+
+            if (!stateName || !districtName) return;
+
+            const selectedState = statesData.states.find(state => state.name === stateName);
+            const selectedDistrict = selectedState.districts.find(district => district.name === districtName);
+
+            if (selectedDistrict && selectedDistrict.cities) {
+                selectedDistrict.cities.forEach(city => {
+                    let option = new Option(city, city);
+                    citySelect.add(option);
+                });
+            }
+
+            citySelect.add(new Option("Other", "other"));
+        }
+
+
+
+
+
+
+
+        async function checkOtherCity(select) {
+            if (select.value === "other") {
+                select.value = "";
+
+                const { value: newCity } = await Swal.fire({
+                    title: "Enter your City",
+                    input: "text",
+                    inputLabel: "Add City",
+                    inputPlaceholder: "Enter your city name",
+                    showCancelButton: true,
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return "City name cannot be empty!";
+                        }
+                    }
+                });
+
+                if (newCity) {
+                    const stateName = document.getElementById("state").value;
+                    const districtName = document.getElementById("district").value;
+
+                    if (!stateName || !districtName) {
+                        Swal.fire("Error", "Please select a state and district first!", "error");
+                        return;
+                    }
+
+                    const requestData = {
+                        StateName: stateName,
+                        DistrictName: districtName,
+                        NewCity: newCity
+                    };
+
+                    try {
+                        const response = await fetch("/Inventory/AddCity", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(requestData)
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            Swal.fire("Success", "City added successfully!", "success");
+
+                            const citySelect = document.getElementById("city");
+                            const newOption = new Option(newCity, newCity);
+                            citySelect.add(newOption);
+                            citySelect.value = newCity;
+                        } else {
+                            Swal.fire("Error", result.message || "Failed to add city.", "error");
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
+                        Swal.fire("Error", "Something went wrong!", "error");
+                    }
+                }
+            }
+        }
+
+
+
+   
+
+    document.getElementById("state").addEventListener("change", updateDistricts);
+    document.getElementById("district").addEventListener("change", updateCities);
+
+
+    window.onload = populateStates;
+</script>
+
+<script>
+      function savedDetail(){
+                Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500
+    });
+    }
+</script>

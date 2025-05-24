@@ -1,0 +1,152 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F6714C32-E579-4014-8B12-804853BE1925}|..\\ERP_Component_DAL\\ERP_Component_DAL.csproj|d:\\github\\backup\\backup of erp\\erp_component_dal\\services\\inventoryservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F490951-4E76-408B-B4F3-D4C500C97A6A}|ERP_Components.csproj|d:\\github\\backup\\backup of erp\\erp_components\\controllers\\inventorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F490951-4E76-408B-B4F3-D4C500C97A6A}|ERP_Components.csproj|solutionrelative:controllers\\inventorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F490951-4E76-408B-B4F3-D4C500C97A6A}|ERP_Components.csproj|d:\\github\\backup\\backup of erp\\erp_components\\views\\inventory\\stockout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4F490951-4E76-408B-B4F3-D4C500C97A6A}|ERP_Components.csproj|solutionrelative:views\\inventory\\stockout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F6714C32-E579-4014-8B12-804853BE1925}|..\\ERP_Component_DAL\\ERP_Component_DAL.csproj|d:\\github\\backup\\backup of erp\\erp_component_dal\\models\\lotbatch.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F6714C32-E579-4014-8B12-804853BE1925}|..\\ERP_Component_DAL\\ERP_Component_DAL.csproj|d:\\github\\backup\\backup of erp\\erp_component_dal\\models\\items.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F6714C32-E579-4014-8B12-804853BE1925}|..\\ERP_Component_DAL\\ERP_Component_DAL.csproj|d:\\github\\backup\\backup of erp\\erp_component_dal\\services\\userservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F6714C32-E579-4014-8B12-804853BE1925}|..\\ERP_Component_DAL\\ERP_Component_DAL.csproj|d:\\github\\backup\\backup of erp\\erp_component_dal\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F490951-4E76-408B-B4F3-D4C500C97A6A}|ERP_Components.csproj|d:\\github\\backup\\backup of erp\\erp_components\\views\\inventory\\addstockadjustment.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4F490951-4E76-408B-B4F3-D4C500C97A6A}|ERP_Components.csproj|solutionrelative:views\\inventory\\addstockadjustment.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 290,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "InventoryController.cs",
+              "DocumentMoniker": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\Controllers\\InventoryController.cs",
+              "RelativeDocumentMoniker": "Controllers\\InventoryController.cs",
+              "ToolTip": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\Controllers\\InventoryController.cs",
+              "RelativeToolTip": "Controllers\\InventoryController.cs",
+              "ViewState": "AgIAACsCAAAAAAAAAAASwEACAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T09:38:23.595Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "StockOut.cshtml",
+              "DocumentMoniker": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\Views\\Inventory\\StockOut.cshtml",
+              "RelativeDocumentMoniker": "Views\\Inventory\\StockOut.cshtml",
+              "ToolTip": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\Views\\Inventory\\StockOut.cshtml",
+              "RelativeToolTip": "Views\\Inventory\\StockOut.cshtml",
+              "ViewState": "AgIAAJ8AAAAAAAAAAAAAAA8BAACDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-23T01:45:17.806Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "UserServices.cs",
+              "DocumentMoniker": "D:\\GitHub\\backup\\backup of ERP\\ERP_Component_DAL\\Services\\UserServices.cs",
+              "RelativeDocumentMoniker": "..\\ERP_Component_DAL\\Services\\UserServices.cs",
+              "ToolTip": "D:\\GitHub\\backup\\backup of ERP\\ERP_Component_DAL\\Services\\UserServices.cs",
+              "RelativeToolTip": "..\\ERP_Component_DAL\\Services\\UserServices.cs",
+              "ViewState": "AgIAAIkBAAAAAAAAAAAAAI4BAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-22T05:58:02.661Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "InventoryServices.cs",
+              "DocumentMoniker": "D:\\GitHub\\backup\\backup of ERP\\ERP_Component_DAL\\Services\\InventoryServices.cs",
+              "RelativeDocumentMoniker": "..\\ERP_Component_DAL\\Services\\InventoryServices.cs",
+              "ToolTip": "D:\\GitHub\\backup\\backup of ERP\\ERP_Component_DAL\\Services\\InventoryServices.cs",
+              "RelativeToolTip": "..\\ERP_Component_DAL\\Services\\InventoryServices.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEgGAABVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-20T18:06:42.043Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Product.cs",
+              "DocumentMoniker": "D:\\GitHub\\backup\\backup of ERP\\ERP_Component_DAL\\Models\\Product.cs",
+              "RelativeDocumentMoniker": "..\\ERP_Component_DAL\\Models\\Product.cs",
+              "ToolTip": "D:\\GitHub\\backup\\backup of ERP\\ERP_Component_DAL\\Models\\Product.cs",
+              "RelativeToolTip": "..\\ERP_Component_DAL\\Models\\Product.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-23T01:48:48.223Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AddStockAdjustment.cshtml",
+              "DocumentMoniker": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\Views\\Inventory\\AddStockAdjustment.cshtml",
+              "RelativeDocumentMoniker": "Views\\Inventory\\AddStockAdjustment.cshtml",
+              "ToolTip": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\Views\\Inventory\\AddStockAdjustment.cshtml",
+              "RelativeToolTip": "Views\\Inventory\\AddStockAdjustment.cshtml",
+              "ViewState": "AgIAALcAAAAAAAAAAAAAAMcAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-22T14:06:52.831Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Items.cs",
+              "DocumentMoniker": "D:\\GitHub\\backup\\backup of ERP\\ERP_Component_DAL\\Models\\Items.cs",
+              "RelativeDocumentMoniker": "..\\ERP_Component_DAL\\Models\\Items.cs",
+              "ToolTip": "D:\\GitHub\\backup\\backup of ERP\\ERP_Component_DAL\\Models\\Items.cs",
+              "RelativeToolTip": "..\\ERP_Component_DAL\\Models\\Items.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAAAowE8AAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-22T13:44:27.283Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "LotBatch.cs",
+              "DocumentMoniker": "D:\\GitHub\\backup\\backup of ERP\\ERP_Component_DAL\\Models\\LotBatch.cs",
+              "RelativeDocumentMoniker": "..\\ERP_Component_DAL\\Models\\LotBatch.cs",
+              "ToolTip": "D:\\GitHub\\backup\\backup of ERP\\ERP_Component_DAL\\Models\\LotBatch.cs",
+              "RelativeToolTip": "..\\ERP_Component_DAL\\Models\\LotBatch.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAAAAoAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-23T17:28:24.326Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

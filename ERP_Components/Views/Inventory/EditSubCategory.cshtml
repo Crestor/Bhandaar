@@ -1,0 +1,60 @@
+﻿@using ERP_Component_DAL.Models;
+<link rel="stylesheet" href="~/css/Product.css" />
+@{
+    ViewBag.Title = "Modify SubCategory";
+
+}
+@model Category
+
+<div class="container">
+
+
+    <div style="display:flex; justify-content:center; align-items:center;margin:auto">
+        <h4>Modify Sub Category</h4>
+    </div>
+    <form method="post" asp-action="EditSubCategory" asp-controller="Inventory" onsubmit="return savedDetail()">
+        <div class="form-section">
+            <div class="form-row">
+                <label class="required">Category Name</label>
+               <input value="@Model.categoryName" name="categoryName" readonly />
+               <input value="@Model.SubCategoryId" name="SubCategoryId" hidden />
+               
+          
+                <label class="required">SubCategory Name</label>
+                <input type="text"  name="subCategoryName" value="@Model.subCategoryName" placeholder="Enter Category Name" />
+            </div>
+            <div class="form-row">
+                <label class="required">SubCategory Code</label>
+                <input type="text" name="categoryCode" value="@Model.categoryCode" placeholder="Enter Category code" />
+            
+                <label class="required">SubCategory Description</label>
+                <textarea name="categoryDescription" value="@Model.categoryDescription" placeholder="Enter product Description"></textarea>
+
+            </div>
+
+            <div class="form-row" style="width:50%">
+                <label class="required">Is Active</label>
+                <select value="@Model.isActive" name="isActive" required>
+                    <option selected disabled>select</option>
+                    <option>yes</option>
+                    <option>NO</option>
+                </select>
+            </div>
+            <div class="button-container">
+                <button type="submit">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+      function savedDetail(){
+                Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500
+    });
+    }
+</script>

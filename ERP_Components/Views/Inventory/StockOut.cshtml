@@ -1,0 +1,321 @@
+﻿@using ERP_Component_DAL.Models;
+
+
+@{
+    ViewBag.Title = "Inventory Management";
+    string createdby = Context.Session.GetString("UserId");
+}
+
+<link rel="stylesheet" href="~/css/Product.css">
+
+@model List<Product>
+
+
+<div id="product" class="container" style="display:block">
+
+    <form method="post" asp-action="StockAssignmenttoUser" asp-controller="Inventory" onsubmit="return savedDetail()">
+
+        <div class="form-section">
+            <h3>Items Out</h3>
+
+            <div class="form-row" style="width:50%">
+
+
+                <label class="required" for="TransactionType">Reason for Item Assignment:</label>
+                <input type="hidden" name="TransactionType" value="OUT" readonly />
+                <input type="text" name="Perticulars" value="ISSUED FROM STORE" readonly />
+                <input type="hidden" name="type" value="LOT" readonly />
+                <input type="hidden" name="StockDate" value="@DateTime.Now" readonly />
+                <input type="hidden" name="CreatedBY" value="@createdby" />         
+     
+
+            </div>
+
+
+
+            <div class="form-row">
+                <label class="required" for="category">Category:</label>
+                <select name="categoryId" id="role" onchange="getName()">
+                    <option disabled selected>Select</option>
+                    @foreach (var scheme in Model)
+                    {
+                        @foreach (var category in scheme.category)
+                        {
+                            <option value="@category.categoryId">@category.categoryName</option>
+                        }
+                    }
+                </select>
+                <label class="required" for="subCategory">Sub-category:</label>
+                <select id="SubCategory" name="subCategoryId" onchange="getProducts()">
+                    <option selected disabled>Select</option>
+
+                </select>
+            </div>
+            <div class="form-row">
+
+                <label class="required" for="productName">Item Name:</label>
+
+
+                <select id="Productname" name="itemId">
+                    <option selected disabled>Select</option>
+
+                </select>
+
+            
+                <label class="required" for="serial">Stock Quantity:</label>
+
+                <input type="text" id="InstockQuantity" name="InstockQuantity" />
+                </div>
+
+
+
+                <div class="form-row">
+                <label class="required" for="serial">Assigned Quantity:</label>
+                    <input type="text" name="Quantity" id="AssignedQuantity" onchange="getcurrentStock()" />
+
+
+                    <label class="required" for="serial">Remaining Quantity:</label>
+                    <input type="text" id="CurrentStock" name="CurrentStock" />
+             
+
+            </div>
+
+            <div class="form-row" style="display:none" id="lotDisplayID">
+                <table class="table" id="lotsTable">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Lot ID</th>
+                            <th>Stock Entry Date</th>
+                            <th>Available Quantity</th>
+                            <th>Assign Quantity</th>
+                            <th>Unit Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lotRows">
+                   
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-row">
+                <label class="required" for="serial">Current Owner:</label>
+
+                    <input type="text" name="currentOwner" value="Store" readonly style="background-color: #e9ecef; pointer-events: none;" />
+                    <input type="hidden" name="SourceDC" value="EF229FAC-4171-42D4-B0F1-5A4B8A5E22CB" />
+
+
+
+
+                <label class="required" for="DestinationDC">New Owner:</label>
+        
+                <select name="DestinationDC" id="newOwner">
+                    <option disabled selected>Select User</option>
+                    @foreach (var scheme in Model)
+                    {
+                        @foreach (var emp in scheme.employees)
+                        {
+                            <option value="@emp.EmployeeID">@emp.Fullname </option>
+                        }
+                    }
+                </select>
+
+
+            </div>
+
+
+        </div>
+
+        <div id="dynamicInputs"></div>
+        <div id="errorMsg" style="color: red; display: none;"></div>
+        <div class="button-container">
+            <button type="submit" id="submitButton">Submit</button>
+            <button type="reset">Reset</button>
+        </div>
+    </form>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    $('#submitButton').click(function () {
+        $('#dynamicInputs').empty();
+
+        let index = 0;
+        $('#lotRows tr').each(function () {
+            const checkbox = $(this).find('.lot-checkbox');
+            const qtyInput = $(this).find('.assignedQty');
+            const lotId = checkbox.data('lotid');
+            const assignedQty = qtyInput.val();
+
+            if (checkbox.is(':checked') && assignedQty > 0) {
+                $('#dynamicInputs').append(`
+                        <input type="hidden" name="AssignedLots[${index}].lotbatchid" value="${lotId}" />
+                    <input type="hidden" name="AssignedLots[${index}].AssignedQuantity" value="${assignedQty}" />
+                `);
+                index++;
+            }
+        });
+    });
+</script>
+<script>
+    document.getElementById('#submitButton').addEventListener('click', function (e) {
+        const itemQty = parseInt(document.getElementById('AssignedQuantity').value) || 0;
+
+        let totalAssigned = 0;
+        document.querySelectorAll('.assignedQty').forEach(input => {
+            totalAssigned += parseInt(input.value) || 0;
+        });
+
+        f(totalAssigned !== itemQty) {
+            e.preventDefault();
+            document.getElementById('errorMsg').innerText =
+                `Assigned quantity (${totalAssigned}) must match the item quantity (${itemQty}).`;
+            document.getElementById('errorMsg').style.display = 'block';
+        } else {
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+    });
+</script>
+<script>
+
+    var itemData = {};
+    function getName() {
+        var Id = $("#role").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/Inventory/SubCategoriesNames",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: { categoryId: Id },
+            success: function (response) {
+
+                if (response.length > 0) {
+                    $("#SubCategory").empty();
+                    $("#SubCategory").append('<option selected disabled>Select</option>');
+                    response.forEach(function (item) {
+                        console.log("Each item:", item);
+                        $("#SubCategory").append('<option value="' + item.subCategoryId + '">' + item.categoryName + '</option>');
+                    });
+                } else {
+                    $("#SubCategory").empty().append('<option selected disabled>No SubCategory Found</option>');
+                }
+            },
+
+            error: function (xhr, status, error) {
+                console.error("AJAX Error: ", error);
+                console.error("Status: ", status);
+                console.error("Response: ", xhr.responseText);
+                alert("Error fetching user data. Check console for details.");
+            }
+        });
+    }
+
+
+
+    function getProducts() {
+        var Id = $("#SubCategory").val();
+
+        $.ajax({
+            type: "GET",
+            url: "/Inventory/GetProductBasedonCategory",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: { SubCategoryID: Id },
+            success: function (response) {
+                console.log("Subcategories response:", response);
+                if (response.length > 0) {
+                    itemData = {};
+                    $("#Productname").empty();
+                    $("#Productname").append('<option selected disabled>Select</option>');
+                    response.forEach(function (item) {
+                        console.log("Each item:", item);
+                        $("#Productname").append('<option value="' + item.itemId + '">' + item.itemName + '</option>');
+                        itemData[item.itemId] = item.quantity;
+                    });
+                } else {
+                    $("#Productname").empty().append('<option selected disabled>No Product Found</option>');
+                }
+            },
+
+            error: function (xhr, status, error) {
+                console.error("AJAX Error: ", error);
+                console.error("Status: ", status);
+                console.error("Response: ", xhr.responseText);
+                alert("Error fetching user data. Check console for details.");
+            }
+        });
+    }
+    $(document).on('change', '#Productname', function () {
+        var selectedItemId = $(this).val();
+        var quantity = itemData[selectedItemId];
+
+        $('#InstockQuantity').val(quantity !== undefined ? quantity : '');
+    });
+    </script>
+
+
+<script>
+    function getcurrentStock() {
+        var inStock = parseInt($("#InstockQuantity").val()) || 0;
+        var assigned = parseInt($("#AssignedQuantity").val()) || 0;
+        var currentStock = inStock - assigned;
+
+        $("#CurrentStock").val(currentStock);
+
+        document.getElementById("lotDisplayID").style.display = "block";
+
+    }
+</script>
+
+<script>
+
+
+        $('#Productname').change(function () {
+            var itemId = $(this).val();
+            if (itemId) {
+                $.ajax({
+                url: '/Inventory/getLotBatch', // your controller endpoint
+                    type: 'GET',
+                    data: { itemId: itemId },
+                    success: function (lots) {
+                        var rows = '';
+                        lots.forEach(function (lot, index) {
+                            rows += `
+                                <tr>
+                                        <td><input type="checkbox" name="lotbatchid" class="lot-checkbox" data-lotid="${lot.lotbatchid}" /></td>
+                                        <td>${lot.lotseries}</td>
+                                        <td>${lot.stockDate}</td>
+                                        <td>${lot.quantity}</td>
+                                        <td><input type="number" name="assignedQty" class="assignedQty" min="0" max="${lot.quantity}" /></td>
+                                        <td>${lot.unitprice}</td>
+                           
+                                </tr>`;
+                        });
+                        $('#lotRows').html(rows);
+                    },
+                    error: function () {
+                        alert('Failed to load lots');
+                    }
+                });
+            } else {
+                $('#lotRows').html('');
+            }
+        });
+    </script>
+
+
+
+
+<script>
+      function savedDetail(){
+                Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500
+    });
+    }
+</script>

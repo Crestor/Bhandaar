@@ -1,0 +1,106 @@
+﻿@{
+    ViewBag.Title = "Master";
+
+
+}
+<link rel="stylesheet" href="~/css/Product.css" />
+
+@model List<User>
+
+
+<div class="container" id="product" style="display:block; margin-top:50px">
+
+
+
+    <form method="post" asp-action="AddEmployeeDetails" asp-controller="Home">
+        <div class="form-section">
+            <h3>Employee Info</h3>
+            <div class="form-row">
+                <label class="required">Employee  Name</label>
+                <input type="text" class="form-control" name="Fullname" placeholder="Enter Employee Name" />
+
+
+
+                <label class="required">Department Name</label>
+                <select  id="departmentid" name="departmentid">
+                    <option>Select Department Name</option>
+                    
+                    @foreach (var dept in ViewBag.dept)
+                    {
+                        <option value="@dept.departmentId">@dept.departmentName</option>
+                    }
+                    
+                </select>
+            </div>
+            <div class="form-row">
+                <label class="required">Select IDentifier</label>
+                <select class="form-control" name="proofID">
+                <option disabled selected style="color:grey"> Select ID</option>
+                     <option>Employee Number</option>
+                     <option>Employee ID</option>
+                     <option>Aadhar Number</option>
+                    <option>Pan Number</option>
+                    
+            </select>
+
+
+
+                <label class="required">ID Details</label>
+                <input class="form-control" type="text" name="iddetails" placeholder="Enter ID Number" />
+            </div>
+            <div class="form-row" style="width:50%">
+                <label class="">Contact Number</label>
+                <input class="form-control" type="text" name="contactNumber" placeholder="Enter Contact Number" />
+
+            </div>
+        </div>
+        <div class="button-container">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</div>
+
+
+
+
+
+<div>
+    <table class="product-table">
+        <thead >
+            <tr>
+                <th>Sr.</th>
+                <th>Employee Name</th>
+                <th>Contact Number</th>
+                <th>Department</th>
+                <th>Id Type</th>
+                <th>Id details</th>
+            
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                @for (var i = 0; i < Model.Count; i++)
+                {
+                    var v = Model[i];
+               
+                    <tr data-id="@v.userId ">                
+                    <td>@(i + 1)</td>
+                    <td>@v.Fullname </td>
+                    <td>@v.contactNumber</td>
+                    <td>@v.department</td>
+                    <td>@v.proofID</td>
+                    <td>@v.iddetails</td>
+
+
+                </tr>
+                }
+            </tr>
+
+           
+        </tbody>
+    </table>
+</div>
+
+
+

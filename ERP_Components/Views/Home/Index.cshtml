@@ -1,0 +1,143 @@
+﻿@* @using ERP_Component_DAL.Models; *@
+@{
+    ViewBag.Title = "Login Authentication";
+    Layout = "~/Views/Shared/_loginLayout.cshtml";
+
+}
+@* @model Users *@
+
+
+ <link asp-append-version="true" rel="stylesheet" href="/css/Login.css" type="text/css" /> 
+<style>
+    .form-control-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-control {
+        width: 100%;
+        padding-right: 35px;
+    }
+
+    .eye-icon {
+        
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #666;
+        font-size: 16px;
+    }
+</style>
+
+
+
+
+<div class="text-center">
+    <main class="form-signin" style="border-radius: 10px; background: #FFFFFF; height: 500px; border-color:#349769; box-shadow: 0px 0px 3px 0px; margin-top: 7%">
+    <form id="loginForm" style="display:grid; justify-content:center;" onsubmit="return Validate();">
+        <div style="width:20px;margin:auto; display:flex;justify-content:center;align-items:center">
+                <img style="width:250px;height:180px" src="/images/Logo.png" />
+        </div>
+
+
+        <div id="error-message" style="color: red; margin-top: 10px; display: none;"></div>
+
+        <div class="form-floating" style="">
+                <label style="font-size:14px; font-weight:500" for="username">User Name</label>
+                <input type="text" class="form-control" id="username" name="userName" placeholder="UserName" required style="padding: 10px 5px;margin-top:3px;border:1px solid #349769;border-radius:5px">
+        </div>
+
+        <div class="form-floating" style="margin-top:3%">
+                <label style="font-size:14px;font-weight:500" for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required style="margin-top:3px;padding: 10px 5px;border:1px solid #349769;border-radius:5px">
+           <i class="fa-solid fa-eye-slash eye-icon" onclick="togglePassword('password', this)"></i> 
+        </div>
+            <div class="form-floating" style="margin-top:3%">
+                <label style="font-size:14px;font-weight:500">Login As</label>
+                <select class="form-control" name="" id="role" style="margin-top:3px;padding: 10px 5px;border:1px solid #349769;border-radius:5px">
+                <option  value="6">Inventory Incharge</option>
+                <option value="8">Asset Incharge</option>
+            </select>
+        </div>
+        <div style="margin-top:30px; display:flex; justify-content:center;align-items:center" >
+                @* <button type="submit" class="btn btn-primary" style=" width:100%; padding:15px;background-color:#349769; color:white; z-index: 99999; border-radius:0.25rem; border:none; outline: none; box-shadow: none;">Log In</button>
+      *@
+                <button type="submit" class="btn btn-primary" style="width:70%;padding:10px; background:#349769; color:white;z-index:999;border-radius:0.25rem; border:none;">Log-In</button>
+
+</div>
+
+    </form>
+</main>
+</div>
+<div id="popup" style="display:none; position:fixed; z-index:9999; right:0;height:100%;width:100%; right:0; overflow:hidden; justify-content:center;  background-color: rgba(255, 255, 255, 0.8); align-items:center;top:0;">
+
+    <div style="display:grid; justify-content:center; align-items:center; margin-top:250px; overflow:hidden;">
+
+
+        <img style="height:200px; width:200px;" src="~/Images/loading3.gif">
+
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="~/js/site.js"></script>
+
+<script>
+    function togglePassword(inputId, eyeIcon) {
+        let inputField = document.getElementById(inputId);
+
+        if (inputField.type === "password") {
+            inputField.type = "text";
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
+        } else {
+            inputField.type = "password";
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
+        }
+    }
+
+    function Validate() {
+        showLoading();
+        var user = {
+            userName: $('#username').val(),
+            password: $('#password').val(),
+                role: $('#role').val(),
+
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/Home/Login",
+            data: user,
+            success: function (result) {
+                if (result.status) {
+                    hideLoading();
+                    window.location.href = result.url;
+                } else {
+                    hideLoading();
+                    $('#error-message').text('Incorrect username or password').show();
+                }
+            },
+            error: function (xhr, status, error) {
+                hideLoading();
+                console.error('Error:', status, error);
+                $('#error-message').text('An error occurred: ' + error).show();
+            }
+        });
+
+        return false;
+    }
+
+
+    $(document).ready(function () {
+        $('#username, #password').on('input', function () {
+            $('#error-message').hide();
+        });
+    });
+</script>
