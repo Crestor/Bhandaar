@@ -873,6 +873,121 @@ namespace ERP_Component_DAL.Services
             }
         }
 
+        public List<StocKRecords> GetStockTransactionRecordsByID(Guid id, string filter)
+        {
+            List<StocKRecords> records = new();
+
+            try
+            {
+
+                string connectionstring = configuration.GetConnectionString("DefaultConnectionString");
+                connection = new SqlConnection(connectionstring);
+                SqlCommand cmd = new();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.CommandText = $"select i.ItemName, s.Quantity, s.TransactionType, s.TransactionDate, s.Perticular from StockTransactions s join Items i on i.ItemId = s.ItemId where i.itemid = '{id}' and transactiontype = '{filter}' order by transactionDate desc";
+                cmd.Connection = connection;
+
+                cmd.CommandTimeout = 300;
+                connection.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    records.Add(new StocKRecords
+                    {
+                        transcationDate = reader["TransactionDate"] as DateTime? ?? DateTime.MinValue,
+                        ItemName = reader["ItemName"] as string ?? string.Empty,
+                        Type = reader["TransactionType"] as string ?? string.Empty,
+                        Quantity = reader["Quantity"] as int? ?? 0,
+                        Perticulars = reader["Perticular"] as string ?? string.Empty,
+                    });
+                }
+
+            }
+            catch
+            {
+                // Consider logging the error
+                throw;
+            }
+
+            return records;
+        }
+
+        public List<StocKRecords> GetStockTransactionRecords()
+        {
+            List<StocKRecords> records = new();
+
+            try
+            {
+
+                string connectionstring = configuration.GetConnectionString("DefaultConnectionString");
+                connection = new SqlConnection(connectionstring);
+                SqlCommand cmd = new();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.CommandText = $"select i.ItemName, s.Quantity, s.TransactionType, s.TransactionDate, s.Perticular from StockTransactions s join Items i on i.ItemId = s.ItemId   order by transactionDate desc";
+                cmd.Connection = connection;
+
+                cmd.CommandTimeout = 300;
+                connection.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    records.Add(new StocKRecords
+                    {
+                        transcationDate = reader["TransactionDate"] as DateTime? ?? DateTime.MinValue,
+                        ItemName = reader["ItemName"] as string ?? string.Empty,
+                        Type = reader["TransactionType"] as string ?? string.Empty,
+                        Quantity = reader["Quantity"] as int? ?? 0,
+                        Perticulars = reader["Perticular"] as string ?? string.Empty,
+                    });
+                }
+
+            }
+            catch
+            {
+                // Consider logging the error
+                throw;
+            }
+
+            return records;
+        }
+        public List<StocKRecords> GetStockTransactionRecords(string filter)
+        {
+            List<StocKRecords> records = new();
+
+            try
+            {
+             
+                string connectionstring = configuration.GetConnectionString("DefaultConnectionString");
+                connection = new SqlConnection(connectionstring);
+                SqlCommand cmd = new();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.CommandText = $"select i.ItemName, s.Quantity, s.TransactionType, s.TransactionDate, s.Perticular from StockTransactions s join Items i on i.ItemId = s.ItemId  and transactiontype in (@filter) order by transactionDate desc";
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("@filter", filter); 
+                cmd.CommandTimeout = 300;
+                connection.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                        {
+                            records.Add(new StocKRecords
+                            {
+                                transcationDate = reader["TransactionDate"] as DateTime? ?? DateTime.MinValue,
+                                ItemName = reader["ItemName"] as string ?? string.Empty,
+                                Type = reader["TransactionType"] as string ?? string.Empty,                                
+                                Quantity = reader["Quantity"] as int? ?? 0,
+                                Perticulars = reader["Perticular"] as string ?? string.Empty,
+                            });
+                        }
+                 
+            }
+            catch
+            {
+                // Consider logging the error
+                throw;
+            }
+
+            return records;
+        }
 
         public List<Items> GetStockTransaction(Ledger ledger)
         {
@@ -931,7 +1046,7 @@ namespace ERP_Component_DAL.Services
                 connection = new SqlConnection(connectionstring);
                 SqlCommand cmd = new();
                 cmd.CommandType = System.Data.CommandType.Text;
-                cmd.CommandText = $"Select ItemName,ItemId from Items where expiryDate < '{DateTime.Now}'";
+                cmd.CommandText = $"Select i.itemid, i.itemName , i.Specification, i.ProductCode, l.ExpiryDate, l.LotSeries,l.unitPrice, l.Quantity from items i join LotBatch l on i.itemid  = l.itemid  and l.Quantity > 0 order by l.ExpiryDate asc";
                 cmd.Connection = connection;
 
                 cmd.CommandTimeout = 300;
@@ -941,11 +1056,14 @@ namespace ERP_Component_DAL.Services
                 {
                     cat.Add(new Items()
                     {
-                        itemId = reader["ItemId"] != DBNull.Value ? (Guid)reader["ItemId"] : Guid.Empty,
-
-
+                        itemId = reader["itemid"] != DBNull.Value ? (Guid)reader["itemid"] : Guid.Empty,
                         itemName = reader["ItemName"] != DBNull.Value ? (string)reader["ItemName"] : string.Empty,
-
+                        specification= reader["specification"] != DBNull.Value ? (string)reader["specification"] : string.Empty,
+                        itemCode = reader["ProductCode"] != DBNull.Value ? (string)reader["ProductCode"] : string.Empty,
+                        ExpiryDate = reader["ExpiryDate"] != DBNull.Value ? (DateTime)reader["ExpiryDate"] : DateTime.MinValue,
+                        lotSeries = reader["lotSeries"] != DBNull.Value ? (string)reader["lotSeries"] : string.Empty,
+                        lotQunatity = reader["quantity"] != DBNull.Value ? ((decimal)reader["quantity"]) : 0m,
+                        unitPrice = reader["unitPrice"] != DBNull.Value ? (decimal)reader["unitPrice"] : 0m,
 
                     });
                 }
@@ -964,7 +1082,49 @@ namespace ERP_Component_DAL.Services
 
         }
 
+        public List<Items> ReorderReport()
+        {
+            try
+            {
+                List<Items> cat = new();
+                string connectionstring = configuration.GetConnectionString("DefaultConnectionString");
+                connection = new SqlConnection(connectionstring);
+                SqlCommand cmd = new();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.CommandText = $" SELECT i.ItemId, i.ItemName,i.specification,i.ProductCode,  s.CurrentQuantity, i.minimumQty, (i.minimumQty - s.CurrentQuantity) AS Shortage    FROM Items i INNER JOIN Inventory s ON i.ItemId = s.ItemId WHERE s.CurrentQuantity < i.minimumQty";
+                cmd.Connection = connection;
 
+                cmd.CommandTimeout = 300;
+                connection.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    cat.Add(new Items()
+                    {
+                        itemId = reader["itemid"] != DBNull.Value ? (Guid)reader["itemid"] : Guid.Empty,
+                        itemName = reader["ItemName"] != DBNull.Value ? (string)reader["ItemName"] : string.Empty,
+                        specification = reader["specification"] != DBNull.Value ? (string)reader["specification"] : string.Empty,
+                        itemCode = reader["ProductCode"] != DBNull.Value ? (string)reader["ProductCode"] : string.Empty,
+                       quantity = reader["CurrentQuantity"] != DBNull.Value ? ((int)reader["CurrentQuantity"]) : 0,
+                        stockAlert = reader["minimumQty"] != DBNull.Value ? (int)reader["minimumQty"] : 0,
+                        StockVariance = reader["Shortage"] != DBNull.Value ? (int)reader["Shortage"] : 0,
+
+                    });
+                }
+
+                return cat;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+        }
         public List<Items> GetItemsNames()
         {
             try
@@ -1006,7 +1166,53 @@ namespace ERP_Component_DAL.Services
             }
         }
 
+        public List<Items> GetItemsReport()
+        {
+            try
+            {
+                List<Items> cat = new();
+                string connectionstring = configuration.GetConnectionString("DefaultConnectionString");
+                connection = new SqlConnection(connectionstring);
+                SqlCommand cmd = new();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.CommandText = $"select i.ItemId, i.ItemName,i.Specification,i.UnitOFMeasure,i.GstRate,i.ProductCode,i.minimumQty,i.brand ,c.CategoryName, s.SubCategoryName,inv.CurrentQuantity from Items i join Categories c on c.categoryID = i.CategoryID join SubCategories s on s.SubCategoryID = i.SubCategoryId join Inventory inv on i.ItemId = inv.ItemId";
+                cmd.Connection = connection;
 
+                cmd.CommandTimeout = 300;
+                connection.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    cat.Add(new Items()
+                    {
+                        itemId = reader["ItemId"] != DBNull.Value ? (Guid)reader["ItemId"] : Guid.Empty,
+                        itemName = reader["ItemName"] != DBNull.Value ? (string)reader["ItemName"] : string.Empty,
+                        categoryName = reader["CategoryName"] != DBNull.Value ? (string)reader["CategoryName"] : string.Empty,
+                        subCategoryName = reader["SubCategoryName"] != DBNull.Value ? (string)reader["SubCategoryName"] : string.Empty,
+                        specification = reader["Specification"] != DBNull.Value ? (string)reader["Specification"] : string.Empty,
+                        UOM = reader["UnitOFMeasure"] != DBNull.Value ? (string)reader["UnitOFMeasure"] : string.Empty,
+                        gst = reader["GstRate"] != DBNull.Value ? Convert.ToInt32(reader["GstRate"]) : 0,
+                        itemCode = reader["ProductCode"] != DBNull.Value ? (string)reader["ProductCode"] : string.Empty,
+                        stockAlert = reader["minimumQty"] != DBNull.Value ? (int)reader["minimumQty"] : 0,
+                        quantity = reader["CurrentQuantity"] != DBNull.Value ? ((int)reader["CurrentQuantity"]) : 0,
+
+
+
+                    });
+                }
+
+                return cat;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
 
         //public bool UpdateWarehouse(Warehouse wh)
         //{
@@ -1552,6 +1758,80 @@ namespace ERP_Component_DAL.Services
 
         }
 
+
+
+        public async Task ApplyStockCorrectionsAsync(Items items)
+        {
+
+            string connectionstring = configuration.GetConnectionString("DefaultConnectionString");
+            using (var connection = new SqlConnection(connectionstring))
+            {
+                await connection.OpenAsync();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var correction in items.AssignedLots)
+                        {
+                            var delta = correction.countedQuantity - correction.InstockQuantity;
+
+                            // 1. Update Lot Table
+                            var updateLotCmd = new SqlCommand(@"
+                        UPDATE LotBatch
+                        SET Quantity = @CountedQty
+                        WHERE ID = @LotBatchId", connection, transaction);
+                            updateLotCmd.Parameters.AddWithValue("@CountedQty", correction.countedQuantity);
+                            updateLotCmd.Parameters.AddWithValue("@LotBatchId", correction.lotbatchid);
+                            await updateLotCmd.ExecuteNonQueryAsync();
+
+                            // 2. Insert into StockTransaction Table
+                            var insertTxnCmd = new SqlCommand(@"
+                        INSERT INTO StockTransactions (Quantity,CreatedBy,ItemId,TransactionType,TransactionDate,sourcedc ,destinationdc,Perticular)
+                        VALUES (@Delta,@UserId,@ItemId,'CORRECTION',GETDATE(), @sourcedc,@destincationdc,@perticular)", connection, transaction);
+                            insertTxnCmd.Parameters.AddWithValue("@LotBatchId", correction.lotbatchid);
+                            insertTxnCmd.Parameters.AddWithValue("@Delta", delta);
+                            insertTxnCmd.Parameters.AddWithValue("@ItemId", items.itemId);
+                            insertTxnCmd.Parameters.AddWithValue("@UserId", items.CreatedBY);
+                            insertTxnCmd.Parameters.AddWithValue("@sourcedc", items.SourceDC);
+                            insertTxnCmd.Parameters.AddWithValue("@destincationdc", items.DestinationDC);
+                            insertTxnCmd.Parameters.AddWithValue("@perticular", items.Perticulars);
+                            await insertTxnCmd.ExecuteNonQueryAsync();
+
+                            // 3. Insert into StockCorrection Table
+                            var insertCorrectionCmd = new SqlCommand(@"
+                        INSERT INTO StockCorrection (ItemId, OldTotalQty, NewTotalQty,CorrectionReason,CorrectionDate, CorrectedByUserId,Notes,LotID)
+                        VALUES (@ItemId, @OldQty, @NewQty,@reason,GetDate(), @userID, @notes,@lotID)", connection, transaction);
+                            insertCorrectionCmd.Parameters.AddWithValue("@ItemId", correction.itemid);
+                            insertCorrectionCmd.Parameters.AddWithValue("@OldQty", correction.InstockQuantity);
+                            insertCorrectionCmd.Parameters.AddWithValue("@NewQty", correction.countedQuantity);
+                            insertCorrectionCmd.Parameters.AddWithValue("@reason", items.Perticulars);                        
+                            insertCorrectionCmd.Parameters.AddWithValue("@userID", items.CreatedBY);
+                            insertCorrectionCmd.Parameters.AddWithValue("@lotID", correction.lotbatchid);
+                            insertCorrectionCmd.Parameters.AddWithValue("@notes", "Stock Correction");
+                            await insertCorrectionCmd.ExecuteNonQueryAsync();
+                        }
+
+                        // 4. Recalculate and update total inventory quantity
+                        var updateInventoryCmd = new SqlCommand(@"
+                    UPDATE Inventory
+                    SET CurrentQuantity = (
+                        SELECT SUM(Quantity) FROM LotBatch WHERE ItemId = @ItemId
+                    )
+                    WHERE ItemId = @ItemId", connection, transaction);
+                        updateInventoryCmd.Parameters.AddWithValue("@ItemId", items.itemId);
+                        await updateInventoryCmd.ExecuteNonQueryAsync();
+
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        // Log or handle exception
+                        throw new Exception("Failed to apply stock corrections", ex);
+                    }
+                }
+            }
+        }
         public bool StockTransfer(Items item)
         {
             try
@@ -1606,7 +1886,7 @@ namespace ERP_Component_DAL.Services
                     using (SqlCommand inventoryCmd = new SqlCommand(updateInventoryQuery, connection))
                     {
                         inventoryCmd.Parameters.AddWithValue("@ReleasedQuantity", item.quantity);
-                        inventoryCmd.Parameters.AddWithValue("@ItemId", item.itemId);
+                        inventoryCmd.Parameters.AddWithValue("@ItemId", item.itemId); ;
                         inventoryCmd.ExecuteNonQuery();
                     }
 
@@ -1651,7 +1931,7 @@ namespace ERP_Component_DAL.Services
                 connection = new SqlConnection(connectionstring);
                 SqlCommand cmd = new();
                 cmd.CommandType = System.Data.CommandType.Text;
-                cmd.CommandText = $"SELECT ID, lotseries, quantity, Unitprice, expirydate,invoicedate FROM LotBatch WHERE ItemId = @ItemId AND Quantity > 0 ORDER BY StockEntryDate;";
+                cmd.CommandText = $"SELECT ID, lotseries, quantity, Unitprice, expirydate,invoicedate,stockentryDate FROM LotBatch WHERE ItemId = @ItemId AND Quantity > 0 ORDER BY StockEntryDate;";
 
                 cmd.Parameters.AddWithValue("@ItemId", itemid);
                 cmd.Connection = connection;
@@ -1664,11 +1944,13 @@ namespace ERP_Component_DAL.Services
                     lots.Add(new LotBatch()
                     {
                         lotbatchid = reader["ID"] != DBNull.Value ? (Guid)(reader["ID"]) : Guid.Empty,
+
                         quantity = reader["quantity"] != DBNull.Value ? (decimal)(reader["quantity"]) : 0,
 
                         invoicedate = reader["invoicedate"] != DBNull.Value ? (DateTime)reader["invoicedate"] : DateTime.MinValue,
                         Unitprice = reader["Unitprice"] != DBNull.Value ? (decimal)reader["Unitprice"] : 0m,
                         expirydate = reader["expirydate"] != DBNull.Value ? (DateTime)reader["expirydate"] : DateTime.MinValue,
+                        stockDate = reader["stockentryDate"] != DBNull.Value ? (DateTime)reader["stockentryDate"] : DateTime.MinValue,
                         lotseries = reader["lotseries"] != DBNull.Value ? (string)reader["lotseries"] : string.Empty,
 
 
@@ -1974,7 +2256,7 @@ namespace ERP_Component_DAL.Services
 
                 SqlCommand cmd2 = new SqlCommand();
                 cmd2.CommandType = System.Data.CommandType.Text;
-                cmd2.CommandText = $"Update  Inventory Set lastUpdated = getdate(), currentQuantity = (Select Sum(Quantity) As Quantity From LotBatch Where ItemId = '{item.itemId}')";
+                cmd2.CommandText = $"Update  Inventory Set lastUpdated = getdate(), currentQuantity = (Select Sum(Quantity) As Quantity From LotBatch Where ItemId = '{item.itemId}')  where itemID = '{item.itemId}'";
                 cmd2.Connection = connection;
                 connection.Open();
                 cmd2.ExecuteScalar();

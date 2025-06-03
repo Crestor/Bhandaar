@@ -8,12 +8,12 @@
 
 <link rel="stylesheet" href="~/css/Product.css">
 
-@model List<Product>
+@model Product
 
 
 <div id="product" class="container" style="display:block">
 
-    <form method="post" asp-action="StockAssignmenttoUser" asp-controller="Inventory" onsubmit="return savedDetail()">
+    <form method="post" asp-action="StockOut" asp-controller="Inventory" onsubmit="return savedDetail()">
 
         <div class="form-section">
             <h3>Items Out</h3>
@@ -23,11 +23,11 @@
 
                 <label class="required" for="TransactionType">Reason for Item Assignment:</label>
                 <input type="hidden" name="TransactionType" value="OUT" readonly />
-                <input type="text" name="Perticulars" value="ISSUED FROM STORE" readonly />
+                <input type="text" name="Perticulars" value="Issued From Store" readonly />
                 <input type="hidden" name="type" value="LOT" readonly />
                 <input type="hidden" name="StockDate" value="@DateTime.Now" readonly />
                 <input type="hidden" name="CreatedBY" value="@createdby" />         
-     
+       <input type="hidden" name="itemName"  id="itemNameID" />
 
             </div>
 
@@ -37,13 +37,12 @@
                 <label class="required" for="category">Category:</label>
                 <select name="categoryId" id="role" onchange="getName()">
                     <option disabled selected>Select</option>
-                    @foreach (var scheme in Model)
-                    {
-                        @foreach (var category in scheme.category)
+                   
+                        @foreach (var category in Model.category)
                         {
                             <option value="@category.categoryId">@category.categoryName</option>
                         }
-                    }
+               
                 </select>
                 <label class="required" for="subCategory">Sub-category:</label>
                 <select id="SubCategory" name="subCategoryId" onchange="getProducts()">
@@ -62,7 +61,7 @@
                 </select>
 
             
-                <label class="required" for="serial">Stock Quantity:</label>
+                <label class="required" for="serial">Current Quantity:</label>
 
                 <input type="text" id="InstockQuantity" name="InstockQuantity" />
                 </div>
@@ -101,24 +100,23 @@
                 <label class="required" for="serial">Current Owner:</label>
 
                     <input type="text" name="currentOwner" value="Store" readonly style="background-color: #e9ecef; pointer-events: none;" />
-                    <input type="hidden" name="SourceDC" value="EF229FAC-4171-42D4-B0F1-5A4B8A5E22CB" />
+          
 
 
 
 
                 <label class="required" for="DestinationDC">New Owner:</label>
         
-                <select name="DestinationDC" id="newOwner">
+                <select name="DestinationDC" id="deptDropdown">
                     <option disabled selected>Select User</option>
-                    @foreach (var scheme in Model)
-                    {
-                        @foreach (var emp in scheme.employees)
+                   
+                        @foreach (var dept in Model.departments)
                         {
-                            <option value="@emp.EmployeeID">@emp.Fullname </option>
+                            <option value="@dept.DepartmentGuid">@dept.departmentName </option>
                         }
-                    }
+               
                 </select>
-
+                <input type="hidden" id="SelectedDepartmentName" name="VendorName" />
 
             </div>
 
@@ -129,11 +127,61 @@
         <div id="errorMsg" style="color: red; display: none;"></div>
         <div class="button-container">
             <button type="submit" id="submitButton">Submit</button>
-            <button type="reset">Reset</button>
+          <button class="btn btn-secondary" type="button" onclick="getTransactionRecord()">View</button>
         </div>
     </form>
 </div>
 
+@if (@Model.items.Count > 0)
+{
+    <div id="product" class="container" style="display:block">
+
+        <div class="form-section">
+            <h3>Added Item Info</h3>
+            <div class="table-container" style="margin-top:40px">
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Sno.</th>
+                            <th>Item Name</th>                    
+                                     
+                            <th>Quantity Issued</th>
+                            <th>Isssue to</th>
+                  
+
+                        </tr>
+                    </thead>
+                    <tbody id="geeks">
+
+
+                        @for (var i = 0; i < Model.items.Count; i++)
+                        {
+
+                            var x = Model.items[i];
+                            var index = i + 1;
+
+                            <tr id="row-@x.">
+                                <td>@index</td>
+                                <td>@x.itemName</td>                          
+                                                  
+                                <td>@x.quantity</td>
+                                <td>@x.VendorName</td>
+                 
+
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+}
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -159,7 +207,7 @@
     });
 </script>
 <script>
-    document.getElementById('#submitButton').addEventListener('click', function (e) {
+    document.getElementById('submitButton').addEventListener('click', function (e) {
         const itemQty = parseInt(document.getElementById('AssignedQuantity').value) || 0;
 
         let totalAssigned = 0;
@@ -267,6 +315,27 @@
         document.getElementById("lotDisplayID").style.display = "block";
 
     }
+        $('#Productname').change(function () {
+    
+        var selectedValue = $(this).val();
+
+  
+        var selectedText = $('#Productname option:selected').text();
+
+        $('#itemNameID').val(selectedText);
+       
+
+    });
+        function getTransactionRecord() {
+        const selectedId = $('#Productname').val(); // Assuming your select has this ID
+        var filterValue ="OUT";
+        if (selectedId) {
+            // Construct the URL dynamically
+           window.location.href = `/Inventory/ViewTransaction?id=${selectedId}&filter=${encodeURIComponent(filterValue)}`;
+        } else {
+               window.location.href = `/Inventory/ViewTransaction?filter=${encodeURIComponent(filterValue)}`;
+        }
+    }
 </script>
 
 <script>
@@ -318,4 +387,10 @@
       timer: 1500
     });
     }
+</script>
+<script>
+    document.getElementById('deptDropdown').addEventListener('change', function() {
+      var selectedText = this.options[this.selectedIndex].text;
+      document.getElementById('SelectedDepartmentName').value = selectedText;
+    });
 </script>

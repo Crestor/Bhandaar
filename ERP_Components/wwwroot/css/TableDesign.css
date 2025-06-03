@@ -1,0 +1,165 @@
+﻿
+td {
+    height: 45px;
+}
+
+    td select {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+    }
+
+    td textarea {
+        text-align: center;
+    }
+
+.ManagerAttendenceApproveContainer {
+    width: 100%;
+    display:flex;
+    justify-content:center;
+    flex-direction:column;
+}
+
+.ManagerAttendenceAttable {
+    margin: 0 auto;
+  justify-content:center;
+    width: 98%;
+    padding: 10px;
+    margin-top:15px;
+    background-color: #00000008;
+    box-shadow: 0 0 3px grey;
+    min-height:60vh;
+    /*     border: 2px solid var(--theme-color); */
+}
+
+.AttendenceHeadingLines {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .AttendenceHeadingLines > h3 {
+        background-color: var(--theme-color);
+        margin: 10px;
+        width: 150px;
+        text-align: center;
+    }
+
+        .AttendenceHeadingLines > h3 > a {
+            color: white;
+            text-decoration-color: white;
+        }
+
+
+/* Leaderboard Table Styles */
+
+
+
+.leaderboard-container {
+   
+   
+    background-color: white;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.your-rank-container {
+    width: 95%;
+    
+    background-color: white;
+    overflow-x:auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 300px; /* Set a max-height for scrolling */
+    overflow-y: auto; /* Enables vertical scroll if content exceeds max-height */
+    position: relative; /* Allow sticky positioning inside this container */
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: scroll;
+    overflow-y: auto;
+}
+
+    .leaderboard-table th {
+        padding: 10px;
+        text-align: Center;
+    /*    border-bottom: 1px solid #ddd;*/
+    }
+
+    .leaderboard-table td {
+        width: 90px !important;
+        text-align: Center;
+   /*     border-bottom: 1px solid #ddd;*/
+    }
+
+    .leaderboard-table th {
+        background-color: #30694F;
+        color: white;
+    }
+
+    .leaderboard-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .leaderboard-table tr:hover {
+        background-color: #eaeaea;
+    }
+
+
+.your-rank-title {
+    text-align: center;
+    font-size: 20px;
+    color: #30694F;
+    font-weight: bold;
+    margin-top: 30px;
+}
+
+.btnContain {
+    display: flex;
+    justify-content: space-between;
+    width: 30%;
+    border-radius: 5px;
+}
+
+
+.abcde{
+    display:flex;
+    justify-content:space-between;
+    padding-inline:120px;
+    align-items:center;
+}
+.forselect{
+    width:30%;
+}
+
+@media only screen and (max-width:414px) {
+    .abcde{
+        display:grid;
+        padding:0px;
+    }
+    .forselect {
+        width: 203%;
+        margin-inline: 15px;
+    }
+    .forbutton {
+        margin-inline: 10px;
+    }
+}
+
+.row {
+    margin-top: 20px;
+    display: flex;
+    height: auto;
+}
+
+@media only screen and (max-width: 410px) {
+    .row {
+        height: auto;
+    }
+    .product {
+        display: grid !important;
+    }
+}

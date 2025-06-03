@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Configuration;
 using System.Diagnostics;
+using ERP_Components.Helper;
 
 namespace ERP_Components.Controllers
 {
@@ -30,31 +31,87 @@ namespace ERP_Components.Controllers
         }
 
 
-        public IActionResult AddEmployee()
-        {
-          ViewBag.dept=  userServices.GetDepartments();
-            var users = userServices.GetEmployees();
-            return View(users);
-        }
-
-
-        public IActionResult AddEmployeeDetails(User user)
-        {
-            userServices.addEmployee(user);
-            return View("AddEmployee");
-        }
-
-        public IActionResult UpdateCredentials()
+        public  IActionResult ForgotPassword()
         {
             return View();
         }
 
+
+        [SessionTimeout]
+        public IActionResult AddDepartments()
+        {
+          var  dept=  userServices.GetDepartments();
+            var numberedList = dept
+    .Select((dept, index) => {
+        dept.departmentSerialNumber = index + 1;
+        return dept;
+    })
+    .ToList();
+
+            return View(numberedList);
+        }
+
+        [SessionTimeout]
+        [HttpPost]
+        public IActionResult AddDepartments(Departments departments)
+        {
+            userServices.addDepartment(departments);
+            var dept = userServices.GetDepartments();
+            var numberedList = dept
+.Select((dept, index) => {
+dept.departmentSerialNumber = index + 1;
+return dept;
+})
+.ToList();
+
+            return View(numberedList);
+        }
+
+        [HttpGet]
+        [SessionTimeout]
+        public IActionResult EditDepartment(int departmentID)
+        {
+            var category = userServices.GetDepartmentbyID(departmentID);
+            return View(category);
+        }
+
+     
+        [SessionTimeout]
+        [HttpPost]
+        public IActionResult EditDepartment(Departments dept)
+        {
+            userServices.UpdateDepartment(dept);
+            return RedirectToAction("AddDepartments");
+        }
+       
+        
+        
+        
+        
+        
+        [SessionTimeout]
+
+        public IActionResult DeleteDepartment(int departmentId)
+        {
+            userServices.DeleteDepartment(departmentId);
+            return RedirectToAction("AddDepartments");
+        }
+
+
+
+
+        [SessionTimeout]
+        public IActionResult UpdateCredentials()
+        {
+            return View();
+        }
+        [SessionTimeout]
         public IActionResult UpdatePassword()
         {
             return View();
         }
 
-
+        [SessionTimeout]
         public IActionResult SetPassword(User user)
         {
             user.userName = HttpContext.Session.GetString("UserName");
@@ -70,7 +127,7 @@ namespace ERP_Components.Controllers
             return RedirectToAction("Logout");
         }
 
-
+        [SessionTimeout]
         private JsonResult HandleChangePassword(User login)
         {
 
@@ -88,6 +145,7 @@ namespace ERP_Components.Controllers
 
 
         }
+        [SessionTimeout]
         public IActionResult UpdateUserName(User user)
         {
             user.userName = HttpContext.Session.GetString("UserName");
@@ -104,7 +162,7 @@ namespace ERP_Components.Controllers
 
         }
 
-
+        [SessionTimeout]
         private JsonResult HandleChangeUsername(User login)
         {
             

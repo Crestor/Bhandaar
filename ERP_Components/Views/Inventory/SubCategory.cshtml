@@ -1,5 +1,6 @@
 ﻿@using ERP_Component_DAL.Models;
-<link rel="stylesheet" href="~/css/Product.css" />
+@using Newtonsoft.Json;
+
 
 @model ManageCategory
 
@@ -8,6 +9,14 @@
 
 }
 
+<link rel="stylesheet" href="~/css/Product.css" />
+
+<link asp-append-version="true" rel="stylesheet" href="~/css/TableDesign.css" />
+<link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator.min.css" rel="stylesheet">
+<link href="~/css/TableCreation.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<script src="~/js/jquery.min.js"></script>
+<link href="~/css/Tables.css" rel="stylesheet" />
 
 
 <div class="container" id="product" style="display:block; margin-top:50px">
@@ -42,14 +51,25 @@
 
 
 
+<div id="product" class="container" style="display:block">
+
+    <div class="form-section">
+        <h3>Sub-Category Info</h3>
 <div class="table-container" id="product" style="display:block">
 
-    <div style="display:flex;justify-content:center;text-align:center">
+            <div style="margin-top:30px">
+                <button class="dashboard-tab active" id="download-csv"> CSV</button>
+                <button class="dashboard-tab" id="download-xlsx"> XLSX</button>
+                <button class="dashboard-tab" id="download-pdf"> PDF</button>
+                <input id="search-input" type="text" placeholder="Search..." style="margin-bottom: 10px; padding: 5px; width: 200px; display:flex;float:right" />
+
+            </div>
+
+            <div id="example-table-theme" class=" " style="width:100%; table-layout: auto; overflow-x: auto;"></div>
 
 
-    </div>
 
-    <div class="Table">
+   @*  <div class="Table">
         <table class="table1">
             <thead>
                 <tr>
@@ -92,9 +112,25 @@
 
 
         </table>
+    </div> *@
+</div>
+
+</div>
+
+</div>
+
+
+<div id="popup" style="display:none; position:fixed; z-index:9999; right:0;height:100%;width:100%; right:0; overflow:hidden; justify-content:center; background-color:rgba(0,0,0,0.5); align-items:center;top:0;">
+    <div style="display:grid; justify-content:center; align-items:center; margin-top:250px; overflow:hidden;">
+
+        <p>
+            <img style="height:60px; width:100px;" src="~/Images/loading3.gif">
+
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
+
 <script>
        
 
@@ -139,6 +175,104 @@
     });
     }
 </script>
+
+
+
+<script>
+
+
+    const tableData = @Html.Raw(JsonConvert.SerializeObject(Model.SubCategories));
+    const editBaseUrl = '@Url.Action("EditSubCategory", "Inventory", new { subCategoryId = "__PLACEHOLDER__" })';
+    const deleteBaseUrl = '@Url.Action("DeleteCategory", "Inventory", new { subCategoryId = "__PLACEHOLDER__" })';
+
+    // Initialize Tabulator
+    const table = new Tabulator("#example-table-theme", {
+        data: tableData,
+        responsiveLayout: "collapse",
+        layout: "fitColumns",
+        pagination: "local",
+        paginationSize: 10,
+        paginationButtonCount: 5,
+        paginationSizeSelector: [10, 25, 50, 100, true],
+
+        columns: [
+            {
+                title: "S.No",
+                field: "categorySerialNumber",   // ← bind directly to the new property
+                hozAlign: "center",
+                headerSort: false,
+                width: 70,
+                download: true,
+                bottomCalc: "count"
+            },
+            { title: "Category Name", field: "categoryName", sorter: "string", responsive: 0 },
+            { title: "Sub-Category Name", field: "subCategoryName", sorter: "string", responsive: 0 },
+            {
+                title: "Action",
+                field: "categoryId",
+                hozAlign: "center",
+                width: 120,
+                headerSort: false,
+                download: false,
+                formatter: function (cell) {
+                    const id = cell.getValue();
+
+                    // Replace the placeholder in the base URL with the actual ID:
+                    const editUrl = editBaseUrl.replace("__PLACEHOLDER__", id);
+                    const deleteUrl = deleteBaseUrl.replace("__PLACEHOLDER__", id);
+
+                    return `
+                                  <button
+                                      class="btn btn-sm s me-1"  style="background-color:#198754"
+                                      onclick="window.location.href='${editUrl}'">
+                                      <i class="fas fa-edit" style="color:#fff"></i>
+                                  </button>
+                                  <button
+                                      class="btn btn-sm "style="background-color:#198754"
+                                      onclick="window.location.href='${deleteUrl}'">
+                                      <i class="fas fa-trash" style="color:#fff"></i>
+                                  </button>`;
+                }
+
+            }
+        ]
+
+
+    });
+
+
+
+    document.getElementById("search-input").addEventListener("keyup", function () {
+        const query = this.value.toLowerCase();
+        table.setFilter((data) => {
+            return Object.values(data).some(
+                value => String(value).toLowerCase().includes(query)
+            );
+        });
+    });
+
+    //trigger download of data.json file
+    document.getElementById("download-csv").addEventListener("click", function () {
+        table.download("csv", "data.csv");
+    });
+
+
+    //trigger download of data.xlsx file
+    document.getElementById("download-xlsx").addEventListener("click", function () {
+        table.download("xlsx", "data.xlsx", { sheetName: "My Data" });
+    });
+
+    //trigger download of data.pdf file
+    document.getElementById("download-pdf").addEventListener("click", function () {
+        table.download("pdf", "data.pdf", {
+            orientation: "portrait", //set page orientation to portrait
+            title: "Report", //add title to report
+        });
+    });
+
+</script>
+
+
 
 
     

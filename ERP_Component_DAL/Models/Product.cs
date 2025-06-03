@@ -9,7 +9,7 @@ namespace ERP_Component_DAL.Models
     public class Product
     {
    
-        public List<Items> items {  get; set; }
+     public List<Items> items {  get; set; }
        public List<Warehouse> warehouse { get; set; }
 
        public List<Category> category {  get; set; }
@@ -22,8 +22,10 @@ namespace ERP_Component_DAL.Models
        public Stock stock {  get; set; }
        public Order order {  get; set; }
 
-        public List<User> employees { get; set; }
+        public List<Departments> departments { get; set; }
 
         public List<LotBatch> lots { get; set; }
+
+
     }
 }

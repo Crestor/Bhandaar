@@ -3,12 +3,12 @@
 
 @{
     ViewBag.Title = "Inventory Management";
-    string createdby = Context.Session.GetString("UserId");
+
 }
 
 <link rel="stylesheet" href="~/css/Product.css">
 
-@model List<Product>
+@model Product
 
 
 
@@ -17,23 +17,25 @@
 
 
 <div id="product" class="container" style="display:block">
-    <form method="post" asp-action="SetStock" asp-controller="Inventory" onsubmit="return savedDetail()">
+    <form method="post" asp-action="AddStock" asp-controller="Inventory" onsubmit="return savedDetail()">
 
 
         <div class="form-section">
             <h3>Add Item</h3>
 
-            <div class="form-row" style="width:50%">
+            <div class="form-row" style="">
 
 
                 <label class="required" for="TransactionType">Reason for Item Entry:</label>
-                <input type="hidden" name="TransactionType" value="IN" readonly />
-                <input type="text"  name="Perticulars" value="By Purchase" readonly />
-                <input type="hidden" name="type" value="LOT" readonly />
+                <input type="text" name="Perticulars" value="By Purchase" readonly />
+                <label class="required" for="StockDate">Transaction Date:</label>
+                <input type="text"  value="@DateTime.Now.ToString("yyyy-MM-dd")" readonly />
+
                 <input type="hidden" name="StockDate" value="@DateTime.Now" readonly />
-                <input type="hidden" name="CreatedBY" value="@createdby" />
-                <input type="hidden" name="SourceDC" value="8CA42812-F890-47D8-A5D8-794A6931E98B" />
-                <input type="hidden" name="DestinationDC" value="EF229FAC-4171-42D4-B0F1-5A4B8A5E22CB" />
+                <input type="hidden" name="TransactionType" value="IN" readonly />
+                <input type="hidden" name="type" value="LOT" readonly />           
+          
+        
 
             </div>
 
@@ -43,13 +45,12 @@
                      <label class="required" for="category">Category:</label>
                 <select name="categoryId" id="role" onchange="getName()">
                     <option  >Select</option>
-                @foreach (var scheme in Model)
-                {
-                    @foreach (var category in scheme.category)
+          
+                    @foreach (var category in Model.category)
                     {
                         <option value="@category.categoryId">@category.categoryName</option>
                     }
-                }
+         
                 </select>    
 
 
@@ -72,6 +73,7 @@
 
                 <label class="" for="batch">Batch Number:</label>
                 <input type="text" name="lotSeries">
+                <input type="hidden" name="itemName"  id="itemNameID" />
             
               
               
@@ -106,19 +108,19 @@
                 <label class="required" for="ExpiryDate">Expiry Date:</label>
                 <input type="date" name="ExpiryDate" required />
 
-
-                <label class="required" for="msl">Warrenty Period:</label>
+                <label class="required" for="ExpiryDate">Vendor Name:</label>
+                <input type="text" name="VendorName" required />
+        @*         <label class="required" for="msl">Warrenty Period:</label>
                 <select id="warrantyDropdown" name="warrenty">
                     <option selected>Select Warrenty Period</option>
-                    @foreach (var scheme in Model)
-                    {
-                        @foreach (var war in scheme.warrenty)
+
+                    @foreach (var war in Model.warrenty)
                         {
                             <option value="@war.warrentyID">@war.PeriodName</option>
                         }
-                    }
+              
                     <option value="add_new">+ Add New Warrenty Period</option>
-                </select>
+                </select> *@
            </div>
             
         </div>
@@ -130,14 +132,66 @@
 
         <div class="button-container">
             <button class="btn btn-success" type="submit">Submit</button>
-            <button class="btn btn-secondary" type="reset">Reset</button>
+            <button class="btn btn-secondary" type="button" onclick="getTransactionRecord()">View</button>
         </div>
     </form>
 </div> 
 
 
+@if(@Model.items.Count > 0)
+{
+<div id="product" class="container" style="display:block">
+
+    <div class="form-section">
+        <h3>Added Item Info</h3>
+        <div class="table-container" style="margin-top:40px">
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Sno.</th>                 
+                        <th>Item Name</th>
+                        <th>Batch Number</th>
+                        <th>Invoice Date</th>
+                        <th>Invoice Number</th>
+                        <th>Quantity Purchased</th>
+                            <th>Price</th>
+                            <th>Expiry Date</th>
+
+                    </tr>
+                </thead>
+                <tbody id="geeks">
 
 
+                    @for (var i = 0; i < Model.items.Count; i++)
+                    {
+
+                        var x = Model.items[i];
+                        var index = i + 1;
+
+                        <tr id="row-@x.">
+                            <td>@index</td>
+                            <td>@x.itemName</td>
+                            <td>@x.lotSeries</td>
+                            <td>@x.InvoiceDate</td>
+                            <td>@x.invoice</td>
+                            <td>@x.quantity</td>
+                            <td>@x.unitPrice</td>
+                            <td>@x.ExpiryDate</td>
+                           
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+}
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -214,17 +268,28 @@
     }
 
 
-    // function updateWarrantyDropdown(item) {
-    //     const warrantyValue = item.warranty; // e.g., 12
-    //     const $warrantyDropdown = $("#WarrantyPeriod");
+    $('#Productname').change(function () {
+    
+        var selectedValue = $(this).val();
 
-    //     if (warrantyValue) {
-    //         $warrantyDropdown.val(warrantyValue.toString());
-    //     } else {
-    //         $warrantyDropdown.val(null); // clear selection
-    //     }
-    // }
+  
+        var selectedText = $('#Productname option:selected').text();
 
+        $('#itemNameID').val(selectedText);
+       
+
+    });
+
+    function getTransactionRecord() {
+        const selectedId = $('#Productname').val(); // Assuming your select has this ID
+            var filterValue = "IN"
+        if (selectedId) {
+            // Construct the URL dynamically
+               window.location.href = `/Inventory/ViewTransaction?id=${selectedId}&filter=${encodeURIComponent(filterValue)}`;
+        } else {
+            window.location.href = `/Inventory/ViewTransaction?filter=${encodeURIComponent(filterValue)}`;
+        }
+    }
 </script>
 
 <script>

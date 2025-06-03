@@ -3,29 +3,66 @@
 
 @{
     ViewBag.Title = "Inventory Management";
+
  
 }
 
 <link rel="stylesheet" href="~/css/Product.css">
 
-@model List<Product>
+@model Product
 
 <div id="product" class="container" style="display:block">
-    <form method="post" asp-action="SetAdjustment" asp-controller="Inventory" onsubmit="return savedDetail()">
+    <form method="post" asp-action="AddStockAdjustment" asp-controller="Inventory" onsubmit="return savedDetail()">
 
         <div class="form-section">
             <h3>Items Adjustment</h3>
+
+
+            <div class="form-row" style="">
+
+
+              
+                <label class="required" for="TransactionType">Reason for Stock Adjustment:</label>
+                <select id="reasons" name="Perticulars">
+                    <option value="Select">Select Reason for Coorection</option>
+                    <option value="Damaged Item">Damaged Item</option>
+                    <option value="Expired Stock">Expired Stock</option>
+                    <option value="Lost Item">Lost Item</option>
+                    <option value="Returned from Customer">Returned from Customer</option>
+                    <option value="Stock Count Discrepancy">Stock Count Discrepancy</option>
+                    <option value="Theft or Pilferage">Theft or Pilferage</option>
+                    <option value="Supplier Return">Supplier Return</option>
+                    <option value="Repackaging or Relabeling">Repackaging or Relabeling</option>
+                    <option value="Quality Issue">Quality Issue</option>
+                    <option value="Transfer to Another Location">Transfer to Another Location</option>
+                    <option value="Warehouse Error">Warehouse Error</option>
+                </select>
+        
+             
+
+
+                <label class="required" for="Date">Correction Date:</label>
+                <input type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" readonly />
+
+
+
+                <input type="hidden" name="TransactionType" value="Correction" readonly />
+                <input type="hidden" name="type" value="LOT" readonly />
+                <input type="hidden" name="StockDate" value="@DateTime.Now" readonly />
+                <input type="hidden" name="itemName" id="itemNameID" />
+
+            </div>
+
             <div class="form-row">
                 <label class="required" for="category">Category:</label>
                 <select name="categoryId" id="role" onchange="getName()">
                     <option disabled selected>Select</option>
-                    @foreach (var scheme in Model)
-                    {
-                        @foreach (var category in scheme.category)
+                  
+                        @foreach (var category in Model.category)
                         {
                             <option value="@category.categoryId">@category.categoryName</option>
                         }
-                    }
+              
                 </select>
                 <label class="required" for="subCategory">Sub-category:</label>
                 <select id="SubCategory" name="subCategoryId" onchange="getProducts()">
@@ -44,66 +81,184 @@
                 </select>
 
 
-                <label class="required" for="supplier">Current Quantity:</label>
-                <input type="number" id="currentStock" name="currentStock" readonly />
+                <label class="required" for="serial">Current Quantity:</label>
+
+                <input type="text" id="InstockQuantity" name="InstockQuantity"   />
 
              
             </div>
-           
+           @* 
             <div class="form-row">
         
 
 
-             <label class="required" for="Quantity">Correction Quantity: (e.g -10 ,10)</label>
-                <input type="number" id="ChangeQty" name="Changequantity" placeholder="enter quantity change" onchange="CalculaeQty()" />
+             <label class="required" for="Quantity">Correction Quantity:(+ for add, - for  reduce)</label>
+                <input type="number" name="Quantity" id="AssignedQuantity" onchange="getcurrentStock()" />
 
 
-             <label class="required" for="Quantity">Updated Quantity:</label>
-                <input type="number" id="UpdateQty" name="quantity" />
+
+                <label class="required" for="serial">Updated Quantity:</label>
+                <input type="text" id="CurrentQuantity" name="CurrentQuantity" />
 
                    
+ *@
+           @*  </div> *@
 
+            <div class="form-row" style="display:none" id="lotDisplayID">
+                <table class="product-table table-bordered " id="lotsTable">
+                    <thead>
+                        <tr>
+                            <th></th>
+                             <th>Lot ID</th>
+                            <th>Stock Entry Date</th>
+                            <th>Available Quantity</th>
+                            <th>Variance</th>
+                            <th>Counted Quantity</th>
+                            <th>Unit Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lotRows">
+                    </tbody>
+                </table>
             </div>
-            <div class="form-row">
+
+
+           @*  <div class="form-row">
             
                 <label for="date">Date:</label>
-                <input type="date" name="date"  />
+                <input type="date" name="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" readonly />
 
              <label for="descr">Reason For Adjustment:</label>
-                <textarea  name="reason"></textarea>   
+                <textarea name="Perticulars"></textarea>
             </div>
-
+ *@
            
         </div>
 
-
+        <div id="dynamicInputs"></div>
+        <div id="errorMsg" style="color: red; display: none;"></div>
         <div class="button-container">
-            <button type="submit">Submit</button>
-            <button type="reset">Reset</button>
+            <button type="submit" id="submitButton">Submit</button>
+            <button class="btn btn-secondary" type="button" onclick="getTransactionRecord()">View</button>
         </div>
     </form>
 </div>
 
 
 
-<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <table id="myTable" class="table table-bordered" style="">
-        <thead>
-            <tr style=" background-color: #F8F8F8;">
-                <th>Sr No.<span style="color: red;"></span></th>   
-                <th>Item Name</th>
-                <th id="Quantity" style="display: flex;">Quantity</th>           
-                <th id="Batch">Batch/Serial</th>
-              
-            </tr>
-        </thead>
-        <tbody id="productDetailsTable"></tbody>
-          </table>
-</div>
+@if (@Model.items.Count > 0)
+{
+    <div id="product" class="container" style="display:block">
+
+        <div class="form-section">
+            <h3>Added Item Info</h3>
+            <div class="table-container" style="margin-top:40px">
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Sno.</th>
+                            <th>Item Name</th>
+                      
+                     
+                            <th>Quantity </th>
+                          
+                            <th>Reason</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="geeks">
+
+
+                        @for (var i = 0; i < Model.items.Count; i++)
+                        {
+
+                            var x = Model.items[i];
+                            var index = i + 1;
+
+                            <tr id="row-@x.">
+                                <td>@index</td>
+                                <td>@x.itemName</td>                            
+                                 <td>@x.quantity</td>
+                                 <td>@x.Perticulars</td>
+                           
+                          
+
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+}
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<script>
+    // function getcurrentStock() {
+    //     var inStock = parseInt($("#InstockQuantity").val()) || 0;
+    //     var assigned = parseInt($("#AssignedQuantity").val()) || 0;
+    //     var currentStock = inStock + assigned;
 
+    //     $("#CurrentQuantity").val(currentStock);
+
+    //     document.getElementById("lotDisplayID").style.display = "block";
+
+    // }
+</script>
+<script>
+$('#submitButton').click(function () {
+    $('#dynamicInputs').empty();
+
+    let index = 0;
+    $('#lotRows tr').each(function () {
+        const checkbox = $(this).find('.lot-checkbox');
+        const varianceInput = $(this).find('.stockvariance');
+        const lotId = checkbox.data('lotid');
+        const currentQty = parseInt(checkbox.data('currentqty'), 10);
+        const stockVariance = parseInt(varianceInput.val(), 10);
+
+        // Compute counted quantity
+        const countedQty = currentQty + (isNaN(stockVariance) ? 0 : stockVariance);
+
+        if (checkbox.is(':checked') && !isNaN(stockVariance)) {
+            $('#dynamicInputs').append(`
+                <input type="hidden" name="AssignedLots[${index}].lotbatchid" value="${lotId}" />
+                <input type="hidden" name="AssignedLots[${index}].InstockQuantity" value="${currentQty}" />
+                <input type="hidden" name="AssignedLots[${index}].StockVariance" value="${stockVariance}" />
+                <input type="hidden" name="AssignedLots[${index}].countedQuantity" value="${countedQty}" />
+            `);
+            index++;
+        }
+    });
+});
+</script>
+<script>
+    // document.getElementById('submitButton').addEventListener('click', function (e) {
+    //     const assignedQtyField = document.getElementById('AssignedQuantity');
+    //     const errorMsg = document.getElementById('errorMsg');
+
+    //     const expectedQty = parseInt(assignedQtyField?.value) || 0;
+
+    //     const totalCounted = Array.from(document.querySelectorAll('.stockvariance'))
+    //         .reduce((sum, input) => sum + (parseInt(input.value) || 0), 0);
+
+    //     if (totalCounted !== expectedQty) {
+    //         e.preventDefault();
+    //         errorMsg.innerText = `Assigned quantity (${totalCounted}) must match the item quantity (${expectedQty}).`;
+    //         errorMsg.style.display = 'block';
+    //     } else {
+    //         errorMsg.style.display = 'none';
+    //     }
+    // });
+</script>
 <script>
       function savedDetail(){
                 Swal.fire({
@@ -114,14 +269,10 @@
       timer: 1500
     });
     }
-
-function CalculaeQty() {
-    var inStock = parseInt($("#currentStock").val()) || 0;
-    var change = parseInt($("#ChangeQty").val()) || 0;
-    var newValue = inStock + change;
-    $("#UpdateQty").val(newValue); // Fixed selector
-}
 </script>
+
+
+
 <script>
     var itemData = {};
     function getName() {
@@ -176,7 +327,7 @@ function CalculaeQty() {
                     response.forEach(function (item) {
                         console.log("Each item:", item);
                         $("#Productname").append('<option value="' + item.itemId + '">' + item.itemName + '</option>');
-                       itemData[item.itemId] = item;
+                       itemData[item.itemId] = item.quantity
                     });
                 } else {
                     $("#Productname").empty().append('<option selected disabled>No Product Found</option>');
@@ -191,30 +342,86 @@ function CalculaeQty() {
             }
         });
     }
-   
-$(document).on('change', '#Productname', function () {
-    var selectedItemId = $(this).val();
-    var item = itemData[selectedItemId];
 
-    if (item) {
-        $('#currentStock').val(item.quantity || '');
+    $(document).on('change', '#Productname', function () {
+        var selectedItemId = $(this).val();
+        var quantity = itemData[selectedItemId];
+        var selectedText = $('#Productname option:selected').text();
+        $('#InstockQuantity').val(quantity !== undefined ? quantity : '');
 
-        // Update table row
-        var row = `
-            <tr>
-                <td>1</td>
-                <td>${item.itemName}</td>
-                <td>${item.quantity}</td>            
-                <td>${item.batch || '-'}</td>             
-            </tr>
-        `;
+        $('#itemNameID').val(selectedText);
+    });
 
-        $('#productDetailsTable').html(row); // Replace content with current selection
+    function getTransactionRecord() {
+        const selectedId = $('#Productname').val(); // Assuming your select has this ID
+        var filterValue = "Correction";
+        if (selectedId) {
+            // Construct the URL dynamically
+            window.location.href = `/Inventory/ViewTransaction?id=${selectedId}&filter=${encodeURIComponent(filterValue)}`;
+        } else {
+            window.location.href = `/Inventory/ViewTransaction?filter=${encodeURIComponent(filterValue)}`;
+        }
+    }
+
+
+
+    $('#Productname').change(function () {
+        var itemId = $(this).val();
+        if (itemId) {
+            $.ajax({
+                url: '/Inventory/getLotBatch',
+                type: 'GET',
+                data: { itemId: itemId },
+                success: function (lots) {
+                    var rows = '';
+                    lots.forEach(function (lot, index) {
+                        rows += `
+                            <tr>
+                                <td><input type="checkbox" name="lotbatchid" class="lot-checkbox" data-lotid="${lot.lotbatchid}" data-currentqty="${lot.quantity}" /></td>
+                                <td>${lot.lotseries}</td>
+                                <td>${new Date(lot.stockDate).toLocaleString('en-GB',{ hour12: true })}</td>
+                                <td>${lot.quantity}</td>
+                               <td>
+                                <input type="number" name="StockVariance" 
+                                       class="form-control stockvariance" 
+                                       data-index="${index}" />
+                            </td>
+                            <td>
+                                <input type="number" name="countedQuantity" 
+                                       class="form-control countedQuantity" 
+                                       data-index="${index}" readonly />
+                            </td>
+                                <td>${lot.unitprice}</td>
+                            </tr>`;
+                    });
+
+                    $('#lotRows').html(rows);
+                         document.getElementById("lotDisplayID").style.display = "block";
+           
+
+
+    
+                    $('.stockvariance').on('input', function () {
+                    const index = $(this).data('index');
+                    const variance = parseFloat($(this).val()) || 0;
+
+                    const currentQty = parseFloat(
+                        $(`.lot-checkbox[data-lotid]`).eq(index).data('currentqty')
+                    ) || 0;
+
+                    const countedQty = currentQty + variance;
+
+                    // Update the counted quantity input
+                    $(`.countedQuantity[data-index="${index}"]`).val(countedQty);
+                });
+            },
+            error: function () {
+                alert('Failed to load lots');
+            }
+        });
     } else {
-        $('#productDetailsTable').empty();
-        $('#currentStock').val('');
+        $('#lotRows').html('');
     }
 });
-
 </script>
 

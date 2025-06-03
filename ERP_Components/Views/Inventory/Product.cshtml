@@ -17,7 +17,17 @@
     <form method="post" asp-action="AddProduct" asp-controller="Inventory" onsubmit="return savedDetail()">
         
                 <div class="form-section">
-            <h3>Product Info</h3>
+            <h3>Item Info</h3>
+            <div class="form-row">
+                <label class="required" for="itemName">Item Name:</label>
+                <input type="text" name="itemName" required />
+                <input type="hidden" name="itemType" value="1" required />
+
+
+                <label class="required" for="itemCode">Item Code:</label>
+                <input type="text" name="itemCode" required />
+
+            </div>
 
 
             <div class="form-row">
@@ -33,24 +43,14 @@
                         }
                     }
                 </select>
-                <label class="required" for="subCategory">Sub-category:</label>
+                <label class="required" for="subCategory">Sub-Category:</label>
                 <select id="name" name="subCategoryId">
                     <option selected disabled>Select</option>
 
                 </select>
             </div>
             
-            <div class="form-row">
-                <label class="required" for="itemName">Product Name:</label>
-                <input type="text" name="itemName" required />
-                <input type="hidden" name="itemType" value="1" required />
-
-
-                <label class="required" for="itemCode">Product Code:</label>
-                <input type="text" name="itemCode" required />
-
-            </div>
-          
+           
             <div class="form-row">
                 
                 <label for="descr">Specification:</label>

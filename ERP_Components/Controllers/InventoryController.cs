@@ -8,9 +8,15 @@ using Newtonsoft.Json.Linq;
 using static System.Collections.Specialized.BitVector32;
 using static Azure.Core.HttpHeader;
 using Microsoft.Extensions.Logging;
+using ERP_Components.Helper;
+using DotNetEnv;
+using Sprache;
+using System.Xml.Linq;
 
 namespace ERP_Components.Controllers
 {
+
+    [SessionTimeout]
     public class InventoryController : Controller
     {
       
@@ -33,12 +39,17 @@ namespace ERP_Components.Controllers
        
         public IActionResult Index()
         {
+         
             return View("Dashboard");
         }
 
         public IActionResult Dashboard()
         {
-            return View();
+            Dashboard d = new Dashboard();
+       
+            d.StocKRecords = inventoryServices.GetStockTransactionRecords();
+
+            return View(d);
         }
 
 
@@ -121,24 +132,24 @@ namespace ERP_Components.Controllers
             List<Items> item = inventoryServices.ViewProductByCategory(SubCategoryID);
             return Json(item);
         }
-        public IActionResult StockOut()
-        {
 
-             var product = new List<Product>
+
+
+        public IActionResult StockTransfer()
         {
+            var product = new List<Product>
+    {
         new Product
         {
 
-            category = inventoryServices.getProductCategoriesName() ?? new List<Category>(),
-             employees = _userServices.GetEmployees() ?? new List<User>(),
-         
+            items = inventoryServices.GetProductNamesFromItems() ?? new List<Items>(),
+            //warehouse = inventoryServices.getWarehouseName() ?? new List<Warehouse>()
 
         }
     };
             return View(product);
 
         }
-
 
         public IActionResult getLotBatch(Guid itemid)
         {
@@ -176,16 +187,30 @@ namespace ERP_Components.Controllers
         //<----------------------Material-------------------->
         public IActionResult Material()
         {
-            var product = new List<Product>
-    {
-        new Product
-        {
+            //        var product = new List<Product>
+            //{
+            //    new Product
+            //    {
 
-            category = inventoryServices.getMaterialCategoriesName() ?? new List<Category>(),
-            //warehouse = inventoryServices.getWarehouseName() ?? new List<Warehouse>()
-            
-        }
-    };
+            //        category = inventoryServices.getMaterialCategoriesName() ?? new List<Category>(),
+            //        //warehouse = inventoryServices.getWarehouseName() ?? new List<Warehouse>()
+
+            //    }
+
+
+            //};
+
+
+        var    Products = new List<ProuctsTest>
+        {
+            new ProuctsTest { Id = 1, Name = "Shampoo", Price = 150 },
+            new ProuctsTest { Id = 2, Name = "Toothpaste", Price = 90 },
+            new ProuctsTest { Id = 3, Name = "Soap", Price = 45 }
+        };
+
+            var product = new CreateSalesModel();
+            product.Products = Products;
+
 
             return View(product);
         }
@@ -233,9 +258,16 @@ namespace ERP_Components.Controllers
         //<---------------------Category------------>
         public IActionResult Category()
         {
-       var categories=  inventoryServices.ViewProductCategory();
-            return View(categories);
-       
+            var categories=  inventoryServices.ViewProductCategory();
+            var numberedList = categories
+    .Select((dept, index) => {
+        dept.categorySerialNumber = index + 1;
+        return dept;
+    })
+    .ToList();
+
+            return View(numberedList);
+
         }
 
         [HttpPost]
@@ -281,7 +313,16 @@ namespace ERP_Components.Controllers
 
             ManageCategory Category = new ManageCategory();
             Category.Categories = inventoryServices.CategoryProductNames();
-            Category.SubCategories = inventoryServices.ViewSubCategory();
+            var subCategory = inventoryServices.ViewSubCategory();
+            var numberedList = subCategory
+    .Select((dept, index) => {
+        dept.categorySerialNumber = index + 1;
+        return dept;
+    })
+    .ToList();
+
+            Category.SubCategories = numberedList;       
+
             return View(Category);
         }
 
@@ -437,24 +478,99 @@ namespace ERP_Components.Controllers
 
         public IActionResult AddStock()
         {
-            var product = new List<Product>
-        {
-        new Product
-        {
-
-            category = inventoryServices.getProductCategoriesName() ?? new List<Category>(),
-
-     
 
 
-            warrenty =  inventoryServices.getProductWarrenty() ?? new List<Warrenty>(),
-
-
-
-        }
-    };
+            var product = new Product
+            {
+                category = inventoryServices.getProductCategoriesName() ?? new List<Category>(),
+                warrenty = inventoryServices.getProductWarrenty() ?? new List<Warrenty>(),
+                items = new List<Items>()
+            };
             return View(product);
           
+        }
+
+        [HttpPost]
+        public IActionResult AddStock(Items item)
+        {
+                item.SourceDC = Guid.Parse("8CA42812-F890-47D8-A5D8-794A6931E98B");
+                item.DestinationDC = Guid.Parse("EF229FAC-4171-42D4-B0F1-5A4B8A5E22CB");
+
+            item.CreatedBY = Guid.Parse(HttpContext.Session.GetString("UserId"));
+
+            item.Perticulars = item.Perticulars + " From " + item.VendorName;
+            inventoryServices.AddStock(item);
+            var product = new Product
+            {
+                category = inventoryServices.getProductCategoriesName() ?? new List<Category>(),
+                warrenty = inventoryServices.getProductWarrenty() ?? new List<Warrenty>(),
+                items = new List<Items> { item }
+            };
+            return View(product);
+          
+        }
+
+        public IActionResult StockOut()
+        {
+
+            var product = new Product
+            {
+
+                category = inventoryServices.getProductCategoriesName() ?? new List<Category>(),
+                departments = _userServices.GetDepartments() ?? new List<Departments>(),
+                items = new List<Items>()
+
+            };
+  
+            return View(product);
+
+        }
+
+        [HttpPost]
+        public IActionResult StockOut(Items item)
+        {
+
+            item.SourceDC = Guid.Parse("EF229FAC-4171-42D4-B0F1-5A4B8A5E22CB");
+            inventoryServices.StockTransfer(item);
+            inventoryServices.InventoryUpdate(item);
+            item.Perticulars = item.Perticulars + " To " + item.VendorName;
+            int totalQuantity = item.AssignedLots.Sum(l => l.AssignedQuantity);
+            item.quantity = totalQuantity;
+            var product = new Product
+            {
+
+                category = inventoryServices.getProductCategoriesName() ?? new List<Category>(),
+                departments = _userServices.GetDepartments() ?? new List<Departments>(),
+                items = new List<Items> { item }
+
+            };
+
+            return View(product);
+       
+        }
+
+
+
+
+        public IActionResult ViewTransaction(Guid id, string filter)
+        {
+            var x = new List<StocKRecords>();
+
+
+            if (id != Guid.Empty && filter != null)
+            {
+                 x = inventoryServices.GetStockTransactionRecordsByID(id, filter);
+            }
+            else if(id == Guid.Empty && filter != null)
+            {
+                 x = inventoryServices.GetStockTransactionRecords(filter);
+
+            }
+            else if (id == Guid.Empty && filter == null )
+            {
+                x = inventoryServices.GetStockTransactionRecords();
+            }
+                return View(x);
         }
 
         public IActionResult ViewInventoryData()
@@ -482,6 +598,12 @@ namespace ERP_Components.Controllers
         }
 
 
+        public IActionResult ItemReport()
+        {
+
+            var items = inventoryServices.GetItemsReport();
+            return View(items);
+        }
         public IActionResult InventoryReport()
         {
 
@@ -489,11 +611,7 @@ namespace ERP_Components.Controllers
             return View(inventory);
         }
 
-        public IActionResult SetStock(Items item)
-        {
-            inventoryServices.AddStock(item);
-            return RedirectToAction("AddStock");
-        }
+
         //public IActionResult ViewStock()
         //{
         //    List<Items> stockList  = inventoryServices.ViewProductStock();
@@ -542,21 +660,7 @@ namespace ERP_Components.Controllers
 
 
         //<--------------------Stock Out----------->
-        public IActionResult StockTransfer()
-        {
-            var product = new List<Product>
-    {
-        new Product
-        {
-
-            items = inventoryServices.GetProductNamesFromItems() ?? new List<Items>(),
-            //warehouse = inventoryServices.getWarehouseName() ?? new List<Warehouse>()
-
-        }
-    };
-            return View(product);
-            
-        }
+       
 
         public IActionResult StockReturnUpdate(Asset asset)
         {
@@ -573,6 +677,8 @@ namespace ERP_Components.Controllers
 
         public IActionResult StockAssignmenttoUser(Items item)
         {
+
+            item.SourceDC = Guid.Parse("EF229FAC-4171-42D4-B0F1-5A4B8A5E22CB");
             inventoryServices.StockTransfer(item);
             inventoryServices.InventoryUpdate(item);
             return RedirectToAction("StockTransfer");
@@ -639,28 +745,49 @@ namespace ERP_Components.Controllers
         public IActionResult ExpiryReport()
         {
             List<Items> item = inventoryServices.ExpiryReport();
-            return View();
+            return View(item);
+        }
+
+
+        public IActionResult ReorderReport()
+        {
+            List<Items> item = inventoryServices.ReorderReport();
+            return View(item);
         }
 
         public IActionResult AddStockAdjustment()
         {
-            var product = new List<Product>
-    {
-        new Product
-        {
+            var product = new Product
+            {
 
-            category = inventoryServices.getProductCategoriesName() ?? new List<Category>(),
-     
+                category = inventoryServices.getProductCategoriesName() ?? new List<Category>(),
+                items = new List<Items>()
 
-        }
-    };
+            };
             return View(product);
         }
 
-        public IActionResult SetAdjustment(Order order)
+        [HttpPost]
+        public IActionResult AddStockAdjustment(Items items )
         {
-            inventoryServices.AddStockAdjustment(order);
-            return RedirectToAction("AddStockAdjustment");
+        
+            items.SourceDC = Guid.Parse("EF229FAC-4171-42D4-B0F1-5A4B8A5E22CB");
+            items.DestinationDC = Guid.Parse("EF229FAC-4171-42D4-B0F1-5A4B8A5E22CB");
+
+            items.CreatedBY = Guid.Parse( HttpContext.Session.GetString("UserId"));
+            inventoryServices.ApplyStockCorrectionsAsync(items);
+            int totalQuantity = items.AssignedLots.Sum(l => l.StockVariance);
+            items.quantity = totalQuantity;
+
+
+            var product = new Product
+            {
+
+                category = inventoryServices.getProductCategoriesName() ?? new List<Category>(),
+                items = new List<Items> { items }
+            };
+            return View(product);
+
         }
 
         public JsonResult GetCurrentStock(Guid itemId)

@@ -205,6 +205,14 @@
       "PackagePath": "staticwebassets\\css\\Stock.css"
     },
     {
+      "Id": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\wwwroot\\css\\TableCreation.css",
+      "PackagePath": "staticwebassets\\css\\TableCreation.css"
+    },
+    {
+      "Id": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\wwwroot\\css\\TableDesign.css",
+      "PackagePath": "staticwebassets\\css\\TableDesign.css"
+    },
+    {
       "Id": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\wwwroot\\css\\Tables.css",
       "PackagePath": "staticwebassets\\css\\Tables.css"
     },
@@ -235,6 +243,18 @@
     {
       "Id": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\wwwroot\\css\\sweetalert2.min.css",
       "PackagePath": "staticwebassets\\css\\sweetalert2.min.css"
+    },
+    {
+      "Id": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\wwwroot\\css\\tabulator.min.css",
+      "PackagePath": "staticwebassets\\css\\tabulator.min.css"
+    },
+    {
+      "Id": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\wwwroot\\css\\tabulator.min.css.map",
+      "PackagePath": "staticwebassets\\css\\tabulator.min.css.map"
+    },
+    {
+      "Id": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\wwwroot\\css\\tabulator.scss",
+      "PackagePath": "staticwebassets\\css\\tabulator.scss"
     },
     {
       "Id": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\wwwroot\\favicon.ico",
@@ -295,6 +315,14 @@
     {
       "Id": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\wwwroot\\js\\sweetalert2.min.js",
       "PackagePath": "staticwebassets\\js\\sweetalert2.min.js"
+    },
+    {
+      "Id": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\wwwroot\\js\\tabulator.js",
+      "PackagePath": "staticwebassets\\js\\tabulator.js"
+    },
+    {
+      "Id": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\wwwroot\\js\\tabulator.min.js",
+      "PackagePath": "staticwebassets\\js\\tabulator.min.js"
     },
     {
       "Id": "D:\\GitHub\\backup\\backup of ERP\\ERP_Components\\wwwroot\\lib\\bootstrap\\LICENSE",

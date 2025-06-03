@@ -1,9 +1,11 @@
 ﻿using ERP_Component_DAL.Services;
 using Microsoft.AspNetCore.Mvc;
 using ERP_Component_DAL.Models;
+using ERP_Components.Helper;
 
 namespace ERP_Components.Controllers
 {
+    [SessionTimeout]
     public class AssetController : Controller
     {
         private readonly ILogger<AssetController> _logger;
@@ -12,6 +14,7 @@ namespace ERP_Components.Controllers
 
         private readonly AssetServices assetServices;
         private readonly IConfiguration _configuration;
+       
 
         public AssetController(ILogger<AssetController> logger, IConfiguration configuration)
         {

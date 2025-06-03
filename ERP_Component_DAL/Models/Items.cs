@@ -29,8 +29,12 @@ namespace ERP_Component_DAL.Models
         public int categoryId {  get; set; }
         public int subCategoryId { get; set; }
 
+        public string categoryName { get; set; }
+
+        public string subCategoryName { get; set; }
+
         // Price
-    
+
         public decimal unitPrice { get; set; }
      
      
@@ -50,7 +54,9 @@ namespace ERP_Component_DAL.Models
        public DateTime InvoiceDate { get; set; }
         public DateTime StockDate { get; set; }
 
-       
+        public string invoice { get; set; }
+
+
         public string type { get; set; }
      
 
@@ -59,8 +65,10 @@ namespace ERP_Component_DAL.Models
 
         public Guid inventoryId { get; set; }
       
-     
+        public int InstockQuantity { get; set; }
         public int CurrentQuantity { get; set; }
+
+        public int countedQuantity { get; set;  }
 
         public int StockVariance { get; set; }
         public int quantity { get; set; }
@@ -80,6 +88,13 @@ namespace ERP_Component_DAL.Models
         public int stockout { get; set; }
 
         public List<LotBatch> AssignedLots { get; set; }
+
+        public decimal lotQunatity { get; set; }
+
+
+        public string VendorName { get; set; }
+
+
 
     }
 }

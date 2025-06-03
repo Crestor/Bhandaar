@@ -1,0 +1,45 @@
+﻿@using ERP_Component_DAL.Models;
+<link rel="stylesheet" href="~/css/Product.css" />
+@{
+    ViewBag.Title = "Modify Department";
+
+}
+
+@model Departments
+
+
+
+<div class="container" style="margin-top:50px">
+
+
+
+    <form method="post" asp-action="EditDepartment" asp-controller="Home" onsubmit="return savedDetail()">
+        <div class="form-section">
+            <h3>Modify Department</h3>
+            <div class="form-row">
+                <label class="required">Department Name</label>
+                <input type="text" value="@Model.departmentName" name="departmentName" placeholder="Enter Department Name" />
+                <input type="text" value="@Model.departmentId" name="departmentId" hidden />
+
+
+            </div>
+
+            <div class="button-container">
+
+                <button type="submit">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+      function savedDetail(){
+                Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500
+    });
+    }
+</script>

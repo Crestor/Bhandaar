@@ -1,10 +1,13 @@
 ﻿using ERP_Component_DAL.Services;
 using Microsoft.AspNetCore.Mvc;
 using ERP_Component_DAL.Models;
+using ERP_Components.Helper;
 
 
 namespace ERP_Components.Controllers
 {
+
+    [SessionTimeout]
     public class WarehouseController : Controller
     {
         private readonly ILogger<WarehouseController> _logger;

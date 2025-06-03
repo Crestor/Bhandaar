@@ -138,6 +138,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XEVkaXRXYXJlaG91c2UuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/GitHub/backup/backup of ERP/ERP_Components/Views/Inventory/ExpiryReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XEV4cGlyeVJlcG9ydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/GitHub/backup/backup of ERP/ERP_Components/Views/Inventory/Inventory.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XEludmVudG9yeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -164,6 +168,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/GitHub/backup/backup of ERP/ERP_Components/Views/Inventory/Product.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XFByb2R1Y3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/GitHub/backup/backup of ERP/ERP_Components/Views/Inventory/ReorderReport.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XFJlb3JkZXJSZXBvcnQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/GitHub/backup/backup of ERP/ERP_Components/Views/Inventory/StockAdjustment.cshtml]

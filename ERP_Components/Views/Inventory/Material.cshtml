@@ -1,4 +1,4 @@
-﻿@using ERP_Component_DAL.Models;
+﻿@* @using ERP_Component_DAL.Models;
 
 
 @{
@@ -24,7 +24,7 @@
                 <input type="text" name="itemName" required />
                 <input type="hidden" name="itemType" value="2" required />
                 
-
+@* 
                 <label class="required" for="sku">Stack Keeping Unit(SKU):</label>
                 <input type="number" name="SKU" required />
             </div>
@@ -46,9 +46,9 @@
             <div class="form-row">
                 <label class="required" for="subCategory">Sub-category:</label>
                 <select id="name" name="subCategoryId">
-                    <option selected disabled>Select</option>
+                    <option selected disabled>Select</option> *@
                   
-                </select>
+               @*  </select>
                 <label for="descr">Specification:</label>
                 <textarea style="width:33%" name="specification"></textarea>
 
@@ -68,13 +68,13 @@
                 <input type="date" name="expiry" />
                 <input type="hidden" name="type" value="lot" required />
             </div>
-        </div>
+        </div> *@
 
 
 
      
 
-        <div class="form-section">
+    @*     <div class="form-section">
             <h3>Stock Details</h3>
             <div class="form-row">
 
@@ -156,3 +156,44 @@
     });
     }
 </script>
+ *@ 
+
+
+
+
+  @using ERP_Component_DAL.Models;
+  @model CreateSalesModel 
+
+@{
+    ViewData["Title"] = "Create Sale";
+}
+
+<h2>Store Sale Entry</h2>
+
+<form method="post">
+    <div>
+        <label>Customer Name</label>
+        <input type="text" asp-for="CustomerName" required />
+    </div>
+    <div>
+        <label>Contact Number</label>
+        <input type="text" asp-for="ContactNumber" required />
+    </div>
+
+    <h3>Add Products</h3>
+    @for (int i = 0; i < Model.CartItems.Count; i++)
+    {
+        <div>
+            <select asp-for="CartItems[@i].ProductId">
+                @foreach (var product in Model.Products)
+                {
+                    <option value="@product.Id">@product.Name - ₹@product.Price</option>
+                }
+            </select>
+            <input asp-for="CartItems[@i].Quantity" placeholder="Qty" />
+            <input asp-for="CartItems[@i].Discount" placeholder="% Discount" />
+        </div>
+    }
+
+    <button type="submit">Generate Bill</button>
+</form>

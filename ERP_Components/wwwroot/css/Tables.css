@@ -3,13 +3,14 @@
     /*    background-color: #ccc;
     border: 1px solid #333;
     border-radius: 10px;*/
+    border-bottom:1px  solid #aaa;
 }
 
     /*Theme the header*/
     #example-table-theme .tabulator-header {
         color: white;
         height: 40px;
-        background-color: var(--theme-color);
+        background-color: #198754;
     }
 
         /*Allow column header names to wrap lines*/
@@ -17,21 +18,32 @@
         #example-table-theme .tabulator-header .tabulator-col-row-handle {
             white-space: normal;
             color: white;
-            background-color: var(--theme-color);
+            background-color: #198754;
         }
 
     /*Color the table rows*/
     #example-table-theme .tabulator-tableholder .tabulator-table .tabulator-row {
-        /*        color: #fff;
-        background-color: #666;*/
+    
     }
 
         /*Color even rows*/
         #example-table-theme .tabulator-tableholder .tabulator-table .tabulator-row:nth-child(even) {
-            background-color: #4d55526e;
+        background-color:white;
         }
 
-
+.tabulator-row .tabulator-cell {
+    border-bottom: 1px solid #aaa;
+    box-sizing: border-box;
+    display: inline-block;
+    outline: none;
+    overflow: hidden;
+    padding: 4px;
+    position: relative;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-align:center;
+}
 
 .dashboard-tabs {
     display: flex;

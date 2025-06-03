@@ -313,7 +313,42 @@ namespace ERP_Component_DAL.Services
             }
         }
 
+        public bool addDepartment(Departments dept)
+        {
+            try
+            {
 
+
+                string connectionString = configuration.GetConnectionString("DefaultConnectionString");
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+
+                    string query = $"Insert into Departments  values(@departmentName, @isActive, @departmentId)";
+
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+
+                        cmd.Parameters.Add("@departmentName", SqlDbType.VarChar).Value = dept.departmentName;
+                        cmd.Parameters.Add("@isActive", SqlDbType.Bit).Value = 1;
+                        cmd.Parameters.Add("@departmentId", SqlDbType.UniqueIdentifier).Value = Guid.NewGuid();
+
+                        connection.Open();
+                        cmd.ExecuteNonQuery();
+
+
+
+                    }
+                    return true;
+                    connection.Close();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while adding Department details", ex);
+            }
+        }
 
         public List<Departments> GetDepartments()
         {
@@ -324,7 +359,7 @@ namespace ERP_Component_DAL.Services
                 connection = new SqlConnection(connectionstring);
                 SqlCommand cmd = new();
                 cmd.CommandType = System.Data.CommandType.Text;
-                cmd.CommandText = $"SELECT departmentID , departmentName from Departments";
+                cmd.CommandText = $"SELECT departmentID , departmentName , DepartmentGuid from Departments";
                 cmd.Connection = connection;
 
                 cmd.CommandTimeout = 300;
@@ -337,6 +372,7 @@ namespace ERP_Component_DAL.Services
                         departmentId = reader["departmentID"] != DBNull.Value ? Convert.ToInt32(reader["departmentID"]) : 0,
 
                         departmentName = reader["departmentName"] != DBNull.Value ? (string)reader["departmentName"] : string.Empty,
+                        DepartmentGuid = reader["DepartmentGuid"] != DBNull.Value ? (Guid)reader["DepartmentGuid"] : Guid.Empty
 
                     });
                 }
@@ -435,6 +471,100 @@ namespace ERP_Component_DAL.Services
                 throw new Exception("An error occurred while fetching route details", ex);
             }
         }
+
+
+        public Departments  GetDepartmentbyID(int employeeID)
+        {
+            try
+            {
+                Departments dept = new();
+                string connectionstring = configuration.GetConnectionString("DefaultConnectionString");
+                connection = new SqlConnection(connectionstring);
+                SqlCommand cmd = new();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.CommandText = $"SELECT departmentID , departmentName from Departments where departmentid = '{employeeID}'";
+                cmd.Connection = connection;
+
+                cmd.CommandTimeout = 300;
+                connection.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+
+                    dept.departmentId = reader["departmentID"] != DBNull.Value ? Convert.ToInt32(reader["departmentID"]) : 0;
+
+                    dept.departmentName = reader["departmentName"] != DBNull.Value ? (string)reader["departmentName"] : string.Empty;
+
+                 
+                }
+
+                return dept;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        public bool UpdateDepartment(Departments dept)
+        {
+            try
+            {
+                string connectionstring = configuration.GetConnectionString("DefaultConnectionString");
+                connection = new SqlConnection(connectionstring);
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.CommandText = $"Update Departments set  departmentName = @deptName  where departmentID = @deptID";
+                cmd.Parameters.AddWithValue("@deptName", dept.departmentName);
+                cmd.Parameters.AddWithValue("@deptID", dept.departmentId);
+                cmd.Connection = connection;
+                connection.Open();
+                cmd.ExecuteScalar();
+                connection.Close();
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+        public bool DeleteDepartment(int departmentId)
+        {
+            try
+            {
+                string connectionstring = configuration.GetConnectionString("DefaultConnectionString");
+                connection = new SqlConnection(connectionstring);
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = System.Data.CommandType.Text;
+                cmd.CommandText = $"Delete From  Departments  where departmentID = {departmentId}";
+
+                cmd.Connection = connection;
+                connection.Open();
+                cmd.ExecuteScalar();
+                connection.Close();
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
     }
 }
 

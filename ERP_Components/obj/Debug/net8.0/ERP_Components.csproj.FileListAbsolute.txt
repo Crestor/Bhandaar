@@ -190,14 +190,6 @@ D:\GitHub\ERP_Components\ERP_Components\obj\Debug\net8.0\refint\ERP_Components.d
 D:\GitHub\ERP_Components\ERP_Components\obj\Debug\net8.0\ERP_Components.pdb
 D:\GitHub\ERP_Components\ERP_Components\obj\Debug\net8.0\ERP_Components.genruntimeconfig.cache
 D:\GitHub\ERP_Components\ERP_Components\obj\Debug\net8.0\ref\ERP_Components.dll
-D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.csproj.AssemblyReference.cache
-D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.GeneratedMSBuildEditorConfig.editorconfig
-D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.AssemblyInfoInputs.cache
-D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.AssemblyInfo.cs
-D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.csproj.CoreCompileInputs.cache
-D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.MvcApplicationPartsAssemblyInfo.cache
-D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.RazorAssemblyInfo.cache
-D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.RazorAssemblyInfo.cs
 D:\GitHub\backup\backup of ERP\ERP_Components\bin\Debug\net8.0\appsettings.Development.json
 D:\GitHub\backup\backup of ERP\ERP_Components\bin\Debug\net8.0\appsettings.json
 D:\GitHub\backup\backup of ERP\ERP_Components\bin\Debug\net8.0\ERP_Components.staticwebassets.runtime.json
@@ -267,6 +259,14 @@ D:\GitHub\backup\backup of ERP\ERP_Components\bin\Debug\net8.0\runtimes\win\lib\
 D:\GitHub\backup\backup of ERP\ERP_Components\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
 D:\GitHub\backup\backup of ERP\ERP_Components\bin\Debug\net8.0\ERP_Component_DAL.dll
 D:\GitHub\backup\backup of ERP\ERP_Components\bin\Debug\net8.0\ERP_Component_DAL.pdb
+D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.csproj.AssemblyReference.cache
+D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.GeneratedMSBuildEditorConfig.editorconfig
+D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.AssemblyInfoInputs.cache
+D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.AssemblyInfo.cs
+D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.csproj.CoreCompileInputs.cache
+D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.MvcApplicationPartsAssemblyInfo.cache
+D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.RazorAssemblyInfo.cache
+D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\ERP_Components.RazorAssemblyInfo.cs
 D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\staticwebassets.build.json
 D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\staticwebassets.development.json
 D:\GitHub\backup\backup of ERP\ERP_Components\obj\Debug\net8.0\staticwebassets\msbuild.ERP_Components.Microsoft.AspNetCore.StaticWebAssets.props

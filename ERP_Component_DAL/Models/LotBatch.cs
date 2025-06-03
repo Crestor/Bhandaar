@@ -29,5 +29,10 @@ namespace ERP_Component_DAL.Models
         public string lotseries { get; set; }
 
         public int AssignedQuantity { get; set; }
+
+        public int InstockQuantity { get; set; }
+        public int countedQuantity { get; set; }
+
+        public int StockVariance { get; set; }
     }
 }

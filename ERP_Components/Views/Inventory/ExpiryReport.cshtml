@@ -1,0 +1,119 @@
+﻿@using ERP_Component_DAL.Models;
+<link rel="stylesheet" href="~/css/Product.css">
+@{
+    ViewBag.Title = "Reports";
+}
+@model List<Items>
+
+@{
+    var expiredQuantity = Model.Where(x => x.ExpiryDate < DateTime.Now).Sum(x => x.lotQunatity);
+    var expiredValue = Model.Where(x => x.ExpiryDate < DateTime.Now).Sum(x => x.lotQunatity * x.unitPrice);
+}
+
+<style>
+    .tab-buttons {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 40px;
+        /* background-color: #f8f9fa; */
+        border-radius: 10px;
+        margin: 20px auto;
+        width: 90%;
+        /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); */
+    }
+
+    .tab-button {
+        padding: 10px 20px;
+        background-color: #023e8a;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+        .tab-button:hover {
+            background-color: #0077b6;
+            transform: scale(1.05);
+        }
+
+    .table-actions {
+        display: flex;
+        float: right;
+        padding-right: 20px;
+        gap: 10px;
+        margin: 10px 30px;
+    }
+
+        .table-actions button{
+            padding: 6px 16px;
+            border: none;
+            background-color: #023e8ac7;
+            color: white;
+            width: 80px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+</style>
+
+<div id="product" class="container" style="display:block">
+
+<div class="form-section">
+    <h3>Expiry Report</h3>
+
+    <div class="expired-summary" style="margin-bottom: 15px; padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 4px;">
+        <strong>Expired Quantity:</strong> @expiredQuantity<br />
+        <strong>Expired Value:</strong> ₹@expiredValue.ToString("N2")
+    </div>
+
+    <div class="table-container">
+        <div class="vendor-section" id="main" style="display: block; margin-top:40px">
+        <table class="vendor-table">
+            <thead>
+                <tr>
+
+                    <th>S.No.</th>
+                    <th>Item Code</th>
+                    <th>Item Name</th>
+                    <th>Specification</th>
+                    <th>Unit Price</th>
+                    <th>Current Quantity</th>
+                    <th>Expiry Date</th>
+                    <th>Days Remaining</th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < Model.Count; i++)
+                {
+                    var v = Model[i];
+              
+                    <tr data-id="@v.itemId">
+
+                       
+
+                        <td>@(i + 1)</td>
+                        <td>@v.itemCode</td>
+                        <td>@v.itemName</td>
+                        <td>@v.specification</td>
+                        <td>@v.unitPrice</td>
+                        <td>@v.lotQunatity</td>
+                        <td>@v.ExpiryDate</td>
+                        <td>@(((v.ExpiryDate - DateTime.Now).Days > 0) ? (v.ExpiryDate - DateTime.Now).Days + " Days" : "Expired")</td>
+
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+
+</div>
+</div>
+
+

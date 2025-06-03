@@ -12,6 +12,8 @@ namespace ERP_Component_DAL.Models
 
         public string departmentName { get; set; }
 
+        public Guid DepartmentGuid { get; set; }
 
+        public int departmentSerialNumber { get; set; }
     }
 }
